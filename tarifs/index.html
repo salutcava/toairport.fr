@@ -39,32 +39,52 @@
   }
   </script>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Ces tarifs sont-ils obligatoires pour tous les taxis ?",
-        "acceptedAnswer": {"@type": "Answer", "text": "Oui. Les forfaits aéroport sont fixés par arrêté préfectoral et obligatoires pour tous les taxis parisiens agréés. Aucun taxi ne peut vous facturer plus ou moins."}
-      },
-      {
-        "@type": "Question",
-        "name": "Y a-t-il des suppléments possibles ?",
-        "acceptedAnswer": {"@type": "Answer", "text": "Oui : supplément de réservation immédiate (4€) ou à l'avance (7€), et supplément passager de 5,50€ à partir du 5e passager."}
-      },
-      {
-        "@type": "Question",
-        "name": "Le tarif est-il le même de nuit ?",
-        "acceptedAnswer": {"@type": "Answer", "text": "Oui pour les forfaits aéroport. Le tarif forfaitaire est identique de jour comme de nuit, week-ends et jours fériés inclus."}
-      },
-      {
-        "@type": "Question",
-        "name": "Comment payer le taxi aéroport ?",
-        "acceptedAnswer": {"@type": "Answer", "text": "Espèces, carte bancaire (obligatoire pour tous les taxis parisiens), virement. Facture TVA disponible sur demande."}
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Ces tarifs sont-ils obligatoires pour tous les taxis ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui. Les forfaits aéroport sont fixés par arrêté préfectoral et obligatoires pour tous les taxis parisiens agréés. Aucun taxi ne peut vous facturer plus ou moins."
       }
-    ]
-  }
+    },
+    {
+      "@type": "Question",
+      "name": "Y a-t-il des suppléments possibles ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui : supplément de réservation immédiate (4€) ou à l'avance (7€), et supplément passager de 5,50€ à partir du 5e passager."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Le tarif est-il le même de nuit ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Oui pour les forfaits aéroport. Le tarif forfaitaire est identique de jour comme de nuit, week-ends et jours fériés inclus."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Quel est le prix d'un taxi entre une gare parisienne et Orly ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "36€ depuis les gares de la rive gauche (Montparnasse, Austerlitz) et 45€ depuis celles de la rive droite (gare de Lyon, gare du Nord, gare de l'Est, Saint-Lazare)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Comment payer le taxi aéroport ?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Espèces, carte bancaire (obligatoire pour tous les taxis parisiens), virement. Facture TVA disponible sur demande."
+      }
+    }
+  ]
+}
   </script>
 </head>
 <body>
@@ -132,27 +152,34 @@
     <div class="tarif-card" data-airport="CDG">
       <div class="tarif-route">Paris Rive Droite ↔ CDG</div>
       <div class="tarif-price">56<span>€</span></div>
-      <div class="tarif-note">Arrondissements 1–10, 17–20<br/>35–50 min hors pointe</div>
+      <div class="tarif-note">Arrondissements 1-4, 8-12, 16-20<br/>35–50 min hors pointe</div>
       <span class="tarif-tag">Forfait officiel</span>
     </div>
     <div class="tarif-card" data-airport="CDG">
       <div class="tarif-route">Paris Rive Gauche ↔ CDG</div>
       <div class="tarif-price">65<span>€</span></div>
-      <div class="tarif-note">Arrondissements 5, 6, 7, 13–15<br/>40–60 min hors pointe</div>
+      <div class="tarif-note">Arrondissements 5-7, 13-15<br/>40–60 min hors pointe</div>
       <span class="tarif-tag">Forfait officiel</span>
     </div>
     <div class="tarif-card" data-airport="ORLY">
       <div class="tarif-route">Paris Rive Droite ↔ Orly</div>
       <div class="tarif-price">45<span>€</span></div>
-      <div class="tarif-note">Arrondissements 1–10, 17–20<br/>25–40 min hors pointe</div>
+      <div class="tarif-note">Arrondissements 1-4, 8-12, 16-20<br/>25–40 min hors pointe</div>
       <span class="tarif-tag">Forfait officiel</span>
     </div>
     <div class="tarif-card" data-airport="ORLY">
       <div class="tarif-route">Paris Rive Gauche ↔ Orly</div>
       <div class="tarif-price">36<span>€</span></div>
-      <div class="tarif-note">Arrondissements 5, 6, 7, 13–15<br/>20–35 min hors pointe</div>
+      <div class="tarif-note">Arrondissements 5-7, 13-15<br/>20–35 min hors pointe</div>
       <span class="tarif-tag">Forfait officiel</span>
     </div>
+  </div>
+  <div class="see-also">
+    <a href="/taxi-paris-orly/" class="btn-ghost">Détail Paris → Orly</a>
+    <a href="/taxi-orly-paris/" class="btn-ghost">Détail Orly → Paris</a>
+    <a href="/taxi-montparnasse-orly/" class="btn-ghost">Gare Montparnasse ↔ Orly</a>
+    <a href="/taxi-paris-cdg/" class="btn-ghost">Détail Paris → CDG</a>
+    <a href="/taxi-cdg-paris/" class="btn-ghost">Détail CDG → Paris</a>
   </div>
 </section>
 
@@ -163,13 +190,14 @@
     <div class="faq-item"><div class="faq-question"><span>Ces tarifs sont-ils obligatoires pour tous les taxis ?</span><span class="faq-icon">+</span></div><div class="faq-answer">Oui. Les forfaits aéroport sont fixés par arrêté préfectoral et obligatoires pour tous les taxis parisiens agréés. Aucun taxi ne peut vous facturer plus ou moins.</div></div>
     <div class="faq-item"><div class="faq-question"><span>Y a-t-il des suppléments possibles ?</span><span class="faq-icon">+</span></div><div class="faq-answer">Oui : supplément de réservation immédiate (4€) ou à l'avance (7€), et supplément passager de 5,50€ à partir du 5e passager.</div></div>
     <div class="faq-item"><div class="faq-question"><span>Le tarif est-il le même de nuit ?</span><span class="faq-icon">+</span></div><div class="faq-answer">Oui pour les forfaits aéroport. Le tarif forfaitaire est identique de jour comme de nuit, week-ends et jours fériés inclus.</div></div>
+    <div class="faq-item"><div class="faq-question"><span>Quel est le prix d'un taxi entre une gare parisienne et Orly ?</span><span class="faq-icon">+</span></div><div class="faq-answer">36€ depuis les gares de la rive gauche (Montparnasse, Austerlitz) et 45€ depuis celles de la rive droite (gare de Lyon, gare du Nord, gare de l'Est, Saint-Lazare). Le détail est sur les pages <a href="/taxi-paris-orly/">taxi Paris → Orly</a> et <a href="/taxi-montparnasse-orly/">taxi Montparnasse ↔ Orly</a>.</div></div>
     <div class="faq-item"><div class="faq-question"><span>Comment payer le taxi aéroport ?</span><span class="faq-icon">+</span></div><div class="faq-answer">Espèces, carte bancaire (obligatoire pour tous les taxis parisiens), virement. Facture TVA disponible sur demande.</div></div>
   </div>
 </section>
 
 <footer>
   <div><span class="footer-logo">to<span>Airport</span>.fr</span><p class="footer-tagline">Taxi & VTC agréé — spécialiste des transferts CDG et Orly depuis Paris.</p></div>
-  <div><p class="footer-col-title">Trajets</p><ul class="footer-links"><li><a href="/taxi-paris-cdg/">Paris → CDG</a></li><li><a href="/taxi-cdg-paris/">CDG → Paris</a></li><li><a href="/taxi-paris-orly/">Paris → Orly</a></li><li><a href="/taxi-orly-paris/">Orly → Paris</a></li><li><a href="/tarifs/">Tarifs 2026</a></li></ul></div>
+  <div><p class="footer-col-title">Trajets</p><ul class="footer-links"><li><a href="/taxi-paris-cdg/">Paris → CDG</a></li><li><a href="/taxi-cdg-paris/">CDG → Paris</a></li><li><a href="/taxi-paris-orly/">Paris → Orly</a></li><li><a href="/taxi-orly-paris/">Orly → Paris</a></li><li><a href="/taxi-montparnasse-orly/">Montparnasse ↔ Orly</a></li><li><a href="/tarifs/">Tarifs 2026</a></li></ul></div>
   <div><p class="footer-col-title">Services</p><ul class="footer-links"><li><a href="/vtc-paris-cdg/">VTC Affaires CDG</a></li><li><a href="/reservation/">Réservation en ligne</a></li></ul></div>
   <div><p class="footer-col-title">Contact</p><ul class="footer-links"><li><a href="tel:+33761466823">07 61 46 68 23</a></li><li><a href="/reservation/">Réserver</a></li></ul></div>
 </footer>

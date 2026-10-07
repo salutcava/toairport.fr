@@ -179,3 +179,23 @@ footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid;
   .booking-card { padding: 1.5rem; }
   .garantie-left, .garantie-right { padding: 2rem 1.5rem; }
 }
+
+/* Blocs de contenu des pages trajet (info-grid, price-list, see-also) */
+.info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.info-grid + .info-grid { margin-top: 4rem; }
+.info-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 400; margin-bottom: 1rem; }
+.info-text { font-size: 0.88rem; color: var(--muted); line-height: 1.9; margin-bottom: 1.5rem; }
+.info-note { font-size: 0.83rem; color: var(--muted); line-height: 1.8; }
+.info-text a, .info-note a, .faq-answer a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(201,169,110,0.35); }
+.info-text a:hover, .info-note a:hover, .faq-answer a:hover { color: var(--gold-light); border-color: var(--gold-light); }
+.price-list { list-style: none; margin-bottom: 1.5rem; }
+.price-list li { padding: 0.8rem 0; border-bottom: 1px solid var(--border); font-size: 0.88rem; display: flex; justify-content: space-between; gap: 1.5rem; }
+.price-list li:last-child { border-bottom: none; }
+.price-list span { color: var(--muted); }
+.price-list strong { color: var(--gold); font-weight: 400; white-space: nowrap; }
+.price-list strong.plain { color: var(--white); }
+.see-also { display: flex; flex-wrap: wrap; gap: 1rem 2rem; margin-top: 2.5rem; }
+
+@media (max-width: 1024px) {
+  .info-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+}
