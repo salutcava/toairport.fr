@@ -37,6 +37,24 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://toairport.fr/taxi-austerlitz-orly/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toairport.fr/taxi-gare-de-lyon-orly/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://toairport.fr/taxi-orly-cdg/</loc>
+    <lastmod>2026-10-11</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://toairport.fr/tarifs/</loc>
     <lastmod>2026-10-07</lastmod>
     <changefreq>monthly</changefreq>

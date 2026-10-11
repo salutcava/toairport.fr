@@ -9,7 +9,8 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `index.html` | Accueil |
 | `tarifs/` | Forfaits officiels CDG et Orly. Page la plus visible dans Google : elle doit pointer vers toutes les pages trajet. |
 | `taxi-paris-cdg/`, `taxi-cdg-paris/`, `taxi-paris-orly/`, `taxi-orly-paris/` | Pages trajet par sens |
-| `taxi-montparnasse-orly/` | Page gare (voir « Ajouter une page gare ») |
+| `taxi-montparnasse-orly/`, `taxi-austerlitz-orly/`, `taxi-gare-de-lyon-orly/` | Pages gare (voir « Ajouter une page gare ») |
+| `taxi-orly-cdg/` | Transfert entre aéroports : pas de forfait, course au compteur |
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
@@ -51,7 +52,7 @@ Chaque FAQ existe deux fois : en HTML (`.faq-item`) et dans le JSON-LD `FAQPage`
 
 ## Ajouter une page gare
 
-Modèle : `taxi-montparnasse-orly/index.html`. Une page par gare et par aéroport, URL `taxi-<gare>-<aeroport>/`.
+Modèle : `taxi-montparnasse-orly/index.html`. Une page par gare et par aéroport, URL `taxi-<gare>-<aeroport>/`. Chaque page doit dire quelque chose de propre à sa gare (accès, alternatives réelles en transports, comparaison avec la gare voisine) : des pages quasi identiques sont traitées comme des pages satellites par Google et pénalisent tout le site. Ne créer une page que si Search Console montre de la demande sur la gare.
 
 1. Copier le dossier modèle, adapter title, meta, canonical, JSON-LD (TaxiService, BreadcrumbList, FAQPage), contenu et formulaire (champ `trajet` en liste à deux sens, adresse préremplie).
 2. Prix selon la rive de la gare (voir tableau ci-dessus).
