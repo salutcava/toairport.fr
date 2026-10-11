@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><title>toAirport.fr</title><defs>
+  <linearGradient id="dome" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#fbfaf6"/><stop offset=".7" stop-color="#ecebe5"/><stop offset="1" stop-color="#d6d4cc"/>
+  </linearGradient>
+  <linearGradient id="socle" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#c4c2ba"/><stop offset="1" stop-color="#8e8c85"/>
+  </linearGradient>
+  <linearGradient id="pa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffdf4"/><stop offset="1" stop-color="#d8d1b9"/></linearGradient>
+  <linearGradient id="pb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f8aa5a"/><stop offset="1" stop-color="#cf661a"/></linearGradient>
+  <linearGradient id="pc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#63adf3"/><stop offset="1" stop-color="#2669bb"/></linearGradient><radialGradient id="fondIcone" cx=".5" cy=".35" r=".75">
+    <stop offset="0" stop-color="#25232a"/><stop offset="1" stop-color="#0a0a0b"/></radialGradient></defs>
+    <rect width="512" height="512" rx="112" fill="url(#fondIcone)"/>
+    <path d="M70 340 L126 128 Q134 96 168 96 L344 96 Q378 96 386 128 L442 340 Z" fill="url(#dome)"/>
+    <path d="M140 118 Q150 106 170 106 L342 106 Q362 106 372 118" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
+    <path d="M229.12 220.95Q229.12 222.28 228.36 223.04Q227.60 223.80 226.27 223.80L214.49 223.80Q213.35 223.80 213.35 224.94L213.35 258Q213.35 265.60 219.81 265.60L223.42 265.60Q224.75 265.60 225.51 266.36Q226.27 267.12 226.27 268.45L226.27 293.15Q226.27 295.81 223.42 296.19L211.83 296.38Q195.30 296.38 187.32 291.44Q179.34 286.50 179.15 272.63L179.15 224.94Q179.15 223.80 178.01 223.80L170.41 223.80Q169.08 223.80 168.32 223.04Q167.56 222.28 167.56 220.95L167.56 200.05Q167.56 198.72 168.32 197.96Q169.08 197.20 170.41 197.20L178.01 197.20Q179.15 197.20 179.15 196.06L179.15 174.59Q179.15 173.26 179.91 172.50Q180.67 171.74 182 171.74L210.50 171.74Q211.83 171.74 212.59 172.50Q213.35 173.26 213.35 174.59L213.35 196.06Q213.35 197.20 214.49 197.20L226.27 197.20Q227.60 197.20 228.36 197.96Q229.12 198.72 229.12 200.05M308.72 296Q306.06 296 305.49 293.53L302.26 278.90Q301.88 277.95 301.12 277.95L272.62 277.95Q271.86 277.95 271.48 278.90L268.44 293.53Q267.87 296 265.21 296L234.05 296Q232.53 296 231.87 295.14Q231.20 294.29 231.58 292.77L265.40 165.47Q265.97 163 268.44 163L306.06 163Q308.53 163 309.10 165.47L342.73 292.77Q342.92 293.15 342.92 293.72Q342.92 296 340.26 296L308.72 296M277.56 249.26L277.56 249.64Q277.56 250.59 278.70 250.59L294.85 250.59Q296.18 250.59 295.99 249.26L287.44 209.74Q287.25 208.98 286.68 208.98Q286.11 208.98 285.92 209.74" fill="#d8322b"/>
+    <rect x="52" y="336" width="408" height="30" rx="8" fill="url(#socle)"/>
+    <rect x="170" y="388" width="40" height="40" rx="8" fill="url(#pa)"/><rect x="236" y="388" width="40" height="40" rx="8" fill="url(#pb)"/><rect x="302" y="388" width="40" height="40" rx="8" fill="url(#pc)"/></svg>

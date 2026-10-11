@@ -16,6 +16,7 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
 | `assets/anim.js`, `assets/vendor/gsap/` | Mouvement (voir « Images et mouvement ») |
 | `assets/images/`, `scripts/` | Images d'ambiance et leur génération (voir « Images et mouvement ») |
+| `assets/logo/`, `favicon.*`, `apple-touch-icon.png`, `assets/og-image.jpg` | Logo et ses déclinaisons, générés par `npm run logo` (voir « Logo ») |
 | `assets/prix.js` | Calculateur de prix des formulaires et grille tarifaire `TARIFS` (voir « Calculateur de prix ») |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
@@ -73,6 +74,23 @@ toAirport est une plateforme de taxis indépendants, sans flotte : les images so
 | `texture-grain.webp` | Grain carrelé sur toute la page (`body::before`, overlay), produit par `scripts/texture-carrelable.py` |
 
 **Mouvement.** `assets/anim.js` charge GSAP 3.15 (cœur, ScrollTrigger, DrawSVG, hébergés dans `assets/vendor/gsap/`) **après l'événement `load`**, pour ne pas retarder la police du titre qui fait le LCP. Il anime la parallaxe des `.hero-media`, le tracé de la carte `.seine-map` au défilement (accueil, tarifs, tarifs anglais) et le compteur des `.tarif-price`. Rien ne bouge avec `prefers-reduced-motion`. Mesure Lighthouse mobile en local avant/après : accueil 100 -> 94-99, LCP 1,5 s -> 2,0-2,6 s.
+
+## Logo
+
+Le logo reprend le lumineux de taxi parisien : « toAirport.fr » en rouge, « PARIS » dessous, et les trois pastilles A, B, C (blanc, orange, bleu). On n'y écrit jamais « TAXI PARISIEN », qui est l'enseigne réglementée des taxis sous licence : toAirport est une plateforme de mise en relation.
+
+Tout sort de `scripts/generer-logo.mjs`, lancé à la main par `npm run logo` (macOS : `sips` pour rastériser, `ffmpeg` pour les montages). Le texte est vectorisé avec opentype.js depuis les polices Barlow (OFL, dépendances de développement), donc les SVG ne chargent aucune police. Pour changer le logo, modifier le script, relancer, relire les images, commiter les sorties.
+
+| Fichier | Usage |
+|---|---|
+| `assets/logo/lumineux.svg` | Logo complet, fond transparent : en-tête (52 px de haut) et pied de page (80 px) de toutes les pages, en `<img>` avec `alt="toAirport.fr"` |
+| `assets/logo/icone.svg`, `icone-512.png` | Icône carrée « tA » dans le dôme |
+| `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Icônes du navigateur, déclarées dans le `<head>` de chaque page |
+| `assets/logo/gmb-logo.png` | Logo de la fiche Google (720×720, le lumineux tient dans le rond que Google découpe) |
+| `assets/logo/gmb-couverture.jpg` | Photo de couverture de la fiche Google (1080×608) |
+| `assets/og-image.jpg` | Image de partage réseaux sociaux (1200×630), référencée par `og:image` |
+
+Une nouvelle page reprend les trois balises d'icône du `<head>` et les deux `<img>` du logo d'une page existante.
 
 ## Calculateur de prix
 

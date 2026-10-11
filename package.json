@@ -5,6 +5,12 @@
     "nodemailer": "^6.9.0"
   },
   "scripts": {
-    "images": "node --env-file-if-exists=.env.local scripts/generer-images.mjs ./assets/images"
+    "images": "node --env-file-if-exists=.env.local scripts/generer-images.mjs ./assets/images",
+    "logo": "node scripts/generer-logo.mjs"
+  },
+  "devDependencies": {
+    "@fontsource/barlow": "^5.3.0",
+    "@fontsource/barlow-semi-condensed": "^5.3.0",
+    "opentype.js": "^2.0.0"
   }
 }

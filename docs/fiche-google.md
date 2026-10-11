@@ -18,6 +18,13 @@
 
 L'adresse est demandée pour la validation mais n'est pas affichée. Google valide en général par vidéo (montrer un véhicule, la licence, un document au nom de l'activité) ou par courrier.
 
+## Logo et couverture
+
+- Logo : `assets/logo/gmb-logo.png` (720×720). Google l'affiche dans un rond, le lumineux y tient en entier.
+- Photo de couverture : `assets/logo/gmb-couverture.jpg` (1080×608).
+
+Les deux se régénèrent avec `npm run logo` (voir la section « Logo » du README).
+
 ## Description (750 caractères maximum)
 
 > Groupe de taxis parisiens pour les transferts entre Paris et les aéroports d'Orly et de Roissy-Charles-de-Gaulle, 24h/24. Les courses Paris ↔ aéroport sont au forfait officiel fixé par arrêté : Orly 36 € (rive gauche) ou 45 € (rive droite), CDG 56 € (rive droite) ou 65 € (rive gauche), au même prix de jour comme de nuit, bagages et péages inclus. Réservation en ligne ou par téléphone, chauffeur avec pancarte à votre nom en zone Arrivées, suivi du vol en cas de retard. Prise en charge dans toutes les gares parisiennes : Montparnasse, Austerlitz, gare de Lyon, gare du Nord. Paiement par carte bancaire ou en espèces, facture sur demande. Transferts Orly ↔ CDG au compteur.
