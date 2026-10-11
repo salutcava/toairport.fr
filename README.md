@@ -23,6 +23,10 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 
 Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
 
+## Contact WhatsApp
+
+Bouton flottant `.wa-float` en bas à droite de toutes les pages, plus un lien « WhatsApp » dans la colonne Contact du pied de page : `https://wa.me/33761466823` avec un message prérempli (français, ou anglais sur les pages `en/`). Une nouvelle page doit reprendre le bloc `<a class="wa-float" …>` placé avant les scripts.
+
 ## Suivi des réservations
 
 Chaque demande reçoit une référence `TA-AAMMJJ-XXXX`, reprise dans l'objet des deux emails. L'email opérateur a pour objet `[Réservation TA-...]` et se termine par un bloc « Suivi » : page d'origine du formulaire (`page`, envoyée par `assets/main.js`) et langue (`lang`, lue sur `<html lang>`). Compter les réservations du mois = compter les emails `[Réservation` reçus ; la page d'origine dit quelles pages convertissent.
