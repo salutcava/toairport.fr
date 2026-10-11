@@ -11,6 +11,7 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `taxi-paris-cdg/`, `taxi-cdg-paris/`, `taxi-paris-orly/`, `taxi-orly-paris/` | Pages trajet par sens |
 | `taxi-montparnasse-orly/`, `taxi-austerlitz-orly/`, `taxi-gare-de-lyon-orly/` | Pages gare (voir « Ajouter une page gare ») |
 | `taxi-orly-cdg/` | Transfert entre aéroports : pas de forfait, course au compteur |
+| `taxi-ou-uber-aeroport/`, `taxi-ou-ligne-14-orly/`, `taxi-ou-rer-b-cdg/` | Pages comparatives (voir « Pages comparatives ») |
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
 | `en/paris-airport-taxi-fares/`, `en/orly-airport-taxi/`, `en/cdg-airport-taxi/` | Version anglaise (voir « Version anglaise ») |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
@@ -57,8 +58,30 @@ Classes définies en fin de `assets/style.css`, à utiliser plutôt que des styl
 - `.info-grid` : deux colonnes de blocs ; `.info-title`, `.info-text`, `.info-note` à l'intérieur.
 - `.price-list` : liste libellé / montant. `<strong>` en doré pour un prix, `<strong class="plain">` pour une durée ou une info.
 - `.see-also` : rangée de liens `.btn-ghost` sous une section.
+- `.pp-block` : bloc « Prix par personne » en fin de section contenu des pages trajet (Paris ↔ CDG, Paris ↔ Orly, gares, pages anglaises CDG et Orly). Forfait + 7 € de réservation à l'avance, divisé par 1 à 4 voyageurs, face au ticket aéroports à 14 €. À recalculer à chaque nouvel arrêté ou nouveau prix du ticket.
 
 Chaque FAQ existe deux fois : en HTML (`.faq-item`) et dans le JSON-LD `FAQPage` du `<head>`. Les deux doivent rester identiques (le JSON-LD est en texte brut, sans liens).
+
+## Pages comparatives
+
+Trois pages comparent le taxi au forfait aux autres façons d'aller à l'aéroport. Elles visent les requêtes que Google propose lui-même (« Uber ou taxi », « tarif ligne 14 Orly ») :
+
+| Page | Compare | Données à tenir à jour |
+|---|---|---|
+| `taxi-ou-uber-aeroport/` | Taxi et Uber, CDG et Orly | Prix moyens Uber par catégorie, relevés sur les pages trajet d'Uber (`uber.com/global/fr/r/routes/paris-idf-fr-to-cdg/` et `…-to-ory/`) |
+| `taxi-ou-ligne-14-orly/` | Taxi et métro 14 | Prix du ticket Paris Région - Aéroports, horaires du métro |
+| `taxi-ou-rer-b-cdg/` | Taxi et RER B, avec la section `#perturbations` | Travaux, fermetures et grèves du RER B, RoissyBus, CDG Express |
+
+Règles :
+
+- **Chaque chiffre a sa source datée** dans la section « Sources » de la page, et la date de relevé figure dans le badge du hero et dans `dateModified` du JSON-LD `Article`. C'est une publicité comparative : elle doit rester objective et vérifiable (Code de la consommation, art. L122-1 et suivants). Pas de prix Uber inventé ni arrondi à l'avantage du taxi.
+- **La page dit quand l'alternative est meilleure** (UberX moins cher en moyenne, métro imbattable seul) : c'est ce qui la rend crédible.
+- **Section `#perturbations` de la page RER B** : à mettre à jour à chaque nouveau calendrier de travaux ou grève annoncée (sources : Bonjour RATP, maligneb.fr), avec la date dans le `section-label` et `dateModified`.
+- **CDG Express** (gare de l'Est ↔ CDG, mise en service prévue le 28 mars 2027) : une page `taxi-ou-cdg-express/` est à créer en janvier ou février 2027, quand le prix du billet sera publié.
+
+Composants (fin de `assets/style.css`) : `.verdict` (la réponse en une phrase), `.table-wrap` + `.compare-table` (colonne taxi en `.is-taxi`), `.pp-table` (prix par personne), `.price-bars` (barres de prix, largeur par `style="--v:<prix>"` sur l'échelle `--max` de la liste), `.hours-chart` (SVG des plages horaires sur 24 h, en deux versions : `.hours-chart--d` en 900 de large et `.hours-chart--m` en 360 de large pour les écrans de moins de 640 px), `.sources`.
+
+Le pied de page des pages françaises a une colonne « Comparer » qui pointe vers les trois pages. Une nouvelle page comparative s'y ajoute, ainsi qu'au `.see-also` de `tarifs/` et au sitemap.
 
 ## Images et mouvement
 

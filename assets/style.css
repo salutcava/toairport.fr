@@ -118,7 +118,7 @@ select.form-input { appearance: none; cursor: pointer; }
 .stat-num span { color: var(--gold); }
 .stat-label { font-size: 0.72rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 0.3rem; }
 
-footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 4rem; }
+footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid; grid-template-columns: 2fr; grid-auto-columns: 1fr; grid-auto-flow: column; gap: 3rem; }
 .footer-logo { display: block; margin-bottom: 1.2rem; line-height: 0; }
 .footer-logo img { height: 80px; width: auto; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.6)) drop-shadow(0 12px 28px rgba(201,169,110,0.15)); }
 .footer-tagline { font-size: 0.78rem; color: var(--muted); line-height: 1.8; max-width: 240px; }
@@ -163,7 +163,7 @@ footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid;
   .garanties { grid-template-columns: 1fr; }
   .garantie-left, .garantie-right { padding: 3rem 2rem; }
   .avis-grid { grid-template-columns: 1fr; }
-  footer { grid-template-columns: 1fr 1fr; padding: 3rem 2rem; gap: 2rem; }
+  footer { grid-template-columns: 1fr 1fr; grid-auto-flow: row; padding: 3rem 2rem; gap: 2rem; }
   .footer-bottom { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
   .section-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; }
   .page-hero { padding: 8rem 2rem 4rem; }
@@ -265,3 +265,64 @@ body::before { content: ''; position: fixed; inset: 0; z-index: 300; pointer-eve
 .wa-float { position: fixed; right: 1.5rem; bottom: 1.5rem; z-index: 250; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; background: #25d366; text-decoration: none; box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 12px 28px -8px rgba(0,0,0,0.8); transition: transform 0.25s, box-shadow 0.25s; }
 .wa-float:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 18px 36px -10px rgba(37,211,102,0.45); }
 @media (max-width: 640px) { .wa-float { right: 1rem; bottom: 1rem; width: 52px; height: 52px; } }
+
+/* ── Pages comparatives (taxi-ou-*) et bloc « prix par personne » ─────
+   .verdict : la réponse en une phrase, sous le hero. .compare-table : tableau
+   critère / taxi / alternative, la colonne taxi en .is-taxi. .price-bars : barres
+   horizontales de prix (largeur en style="--v:<prix>" sur une échelle --max).
+   .hours-chart : SVG des plages horaires sur 24 h. .sources : sources datées. */
+.verdict { max-width: 860px; padding: 2rem 2.2rem; border: 1px solid rgba(201,169,110,0.25); border-left: 3px solid var(--gold); border-radius: 3px; background: linear-gradient(135deg, rgba(201,169,110,0.10), rgba(201,169,110,0.02) 60%); box-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 30px 70px -30px rgba(201,169,110,0.30); }
+.verdict-label { font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.8rem; }
+.verdict p { font-family: var(--font-display); font-size: clamp(1.3rem, 2.2vw, 1.75rem); line-height: 1.35; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 4px; background: var(--card); box-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 40px 80px -30px rgba(0,0,0,0.9); }
+.compare-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.compare-table th, .compare-table td { padding: 1rem 1.3rem; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border); }
+.compare-table tr:last-child td { border-bottom: none; }
+.compare-table thead th { font-size: 0.65rem; letter-spacing: 0.16em; text-transform: uppercase; font-weight: 400; color: var(--muted); background: #131317; }
+.compare-table tbody th { font-weight: 400; color: var(--muted); width: 26%; }
+.compare-table .is-taxi { background: linear-gradient(180deg, rgba(201,169,110,0.07), rgba(201,169,110,0.03)); }
+.compare-table thead .is-taxi { color: var(--gold); }
+.compare-table strong { color: var(--gold); font-weight: 400; }
+.compare-table td.num { white-space: nowrap; }
+.table-note { font-size: 0.8rem; color: var(--muted); line-height: 1.7; margin-top: 1rem; }
+
+.price-bars { list-style: none; max-width: 760px; }
+.price-bars li { display: grid; grid-template-columns: 11rem 1fr; gap: 1rem; align-items: center; padding: 0.45rem 0; font-size: 0.85rem; }
+.price-bars .pb-label { color: var(--muted); }
+.price-bars .pb-track { position: relative; height: 26px; }
+.price-bars .pb-bar { display: flex; align-items: center; justify-content: flex-end; height: 100%; width: calc(var(--v) / var(--max, 100) * 100%); min-width: 3rem; padding-right: 0.6rem; border-radius: 0 4px 4px 0; background: #3a3a42; color: var(--white); font-size: 0.8rem; box-shadow: 0 1px 1px rgba(0,0,0,0.5); transition: filter 0.2s; }
+.price-bars li:hover .pb-bar { filter: brightness(1.25); }
+.price-bars .is-taxi .pb-label { color: var(--white); }
+.price-bars .is-taxi .pb-bar { background: linear-gradient(90deg, #a88a52, var(--gold)); color: var(--black); font-weight: 500; box-shadow: 0 1px 1px rgba(0,0,0,0.5), 0 10px 26px -10px rgba(201,169,110,0.55); }
+
+.hours-chart { width: 100%; max-width: 900px; height: auto; display: block; }
+.hours-chart text { font-family: var(--font-body); fill: var(--muted); font-size: 12px; }
+.hours-chart .hc-name { fill: var(--white); font-size: 13px; }
+.hours-chart .hc-grid { stroke: rgba(255,255,255,0.06); }
+.hours-chart .hc-taxi { fill: var(--gold); }
+.hours-chart .hc-transit { fill: #5a5a64; }
+.hours-chart .hc-works, .hours-chart .hc-flights { fill: url(#hc-hatch); }
+.hours-chart .hc-hatch-m { fill: url(#hc-hatch-m); }
+.hours-chart--m { display: none; }
+
+.pp-table td, .pp-table th { text-align: center; }
+.pp-table tbody th, .pp-table thead th:first-child { text-align: left; }
+.pp-table td strong { font-family: var(--font-display); font-size: 1.35rem; }
+
+.sources { list-style: none; font-size: 0.8rem; color: var(--muted); line-height: 1.7; }
+.sources li { padding: 0.35rem 0; }
+.sources a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(201,169,110,0.35); }
+
+@media (max-width: 640px) {
+  .verdict { padding: 1.5rem 1.3rem; }
+  .compare-table th, .compare-table td { padding: 0.8rem 0.7rem; font-size: 0.8rem; }
+  .price-bars li { grid-template-columns: 1fr; gap: 0.3rem; }
+  .pp-table td strong { font-size: 1rem; }
+  .pp-table th, .pp-table td { padding: 0.7rem 0.35rem; }
+  .pp-table td { white-space: nowrap; }
+  .hours-chart--d { display: none; }
+  .hours-chart--m { display: block; }
+}
+.pp-block { margin-top: 4rem; }
+.table-note a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(201,169,110,0.35); }
