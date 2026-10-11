@@ -42,10 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const btn = form.querySelector('.btn-book');
       const msg = document.getElementById('form-msg');
       const data = Object.fromEntries(new FormData(form));
+      data.page = window.location.pathname;
+      data.lang = document.documentElement.lang === 'en' ? 'en' : 'fr';
+      const en = data.lang === 'en';
 
       btn.disabled = true;
       const originalText = btn.textContent;
-      btn.textContent = 'Envoi en cours…';
+      btn.textContent = en ? 'Sending…' : 'Envoi en cours…';
 
       try {
         const res = await fetch('/.netlify/functions/reservation', {
@@ -56,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const json = await res.json();
         if (res.ok && json.success) {
           msg.style.color = '#c9a96e';
-          msg.textContent = 'Demande envoyée ! Vous recevrez une confirmation par email.';
+          msg.textContent = en ? 'Request sent. You will receive a confirmation email.' : 'Demande envoyée ! Vous recevrez une confirmation par email.';
           form.reset();
           if (d) { const dt = new Date(); dt.setDate(dt.getDate()+1); d.value = dt.toISOString().split('T')[0]; }
         } else {
@@ -64,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       } catch {
         msg.style.color = '#e57373';
-        msg.textContent = 'Erreur lors de l\'envoi. Appelez-nous directement.';
+        msg.textContent = en ? 'Sending failed. Please call us directly.' : 'Erreur lors de l\'envoi. Appelez-nous directement.';
         btn.disabled = false;
         btn.textContent = originalText;
       }

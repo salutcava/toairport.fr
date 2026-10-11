@@ -15,7 +15,13 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
 
-Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`.
+Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
+
+## Suivi des réservations
+
+Chaque demande reçoit une référence `TA-AAMMJJ-XXXX`, reprise dans l'objet des deux emails. L'email opérateur a pour objet `[Réservation TA-...]` et se termine par un bloc « Suivi » : page d'origine du formulaire (`page`, envoyée par `assets/main.js`) et langue (`lang`, lue sur `<html lang>`). Compter les réservations du mois = compter les emails `[Réservation` reçus ; la page d'origine dit quelles pages convertissent.
+
+Le client reçoit l'email en anglais si le formulaire est sur une page `lang="en"`, en français sinon.
 
 ## Tarifs de référence
 
