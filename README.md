@@ -12,6 +12,7 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `taxi-montparnasse-orly/`, `taxi-austerlitz-orly/`, `taxi-gare-de-lyon-orly/` | Pages gare (voir « Ajouter une page gare ») |
 | `taxi-orly-cdg/` | Transfert entre aéroports : pas de forfait, course au compteur |
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
+| `en/paris-airport-taxi-fares/`, `en/orly-airport-taxi/`, `en/cdg-airport-taxi/` | Version anglaise (voir « Version anglaise ») |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
@@ -49,6 +50,18 @@ Classes définies en fin de `assets/style.css`, à utiliser plutôt que des styl
 - `.see-also` : rangée de liens `.btn-ghost` sous une section.
 
 Chaque FAQ existe deux fois : en HTML (`.faq-item`) et dans le JSON-LD `FAQPage` du `<head>`. Les deux doivent rester identiques (le JSON-LD est en texte brut, sans liens).
+
+## Version anglaise
+
+Trois pages sous `en/`, chacune appariée à une page française par `hreflang` (fr, en, x-default vers le français), déclaré des deux côtés :
+
+| Anglais | Français |
+|---|---|
+| `/en/paris-airport-taxi-fares/` | `/tarifs/` |
+| `/en/orly-airport-taxi/` (les deux sens) | `/taxi-orly-paris/` |
+| `/en/cdg-airport-taxi/` (les deux sens) | `/taxi-cdg-paris/` |
+
+Toutes les pages françaises ont un lien « English » dans le menu, vers la page anglaise la plus proche. Les pages anglaises ont `<html lang="en">` : le formulaire y affiche ses messages en anglais et le client reçoit l'email de confirmation en anglais. Toute modification de tarif ou de FAQ sur une page appariée se reporte sur sa jumelle. Ajouter une page anglaise = l'ajouter au tableau, aux balises `hreflang` des deux pages, au menu et au pied de page anglais, et au sitemap.
 
 ## Ajouter une page gare
 
