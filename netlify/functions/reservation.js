@@ -16,6 +16,8 @@ exports.handler = async (event) => {
   // Page d'origine et langue envoyées par assets/main.js : servent à savoir quelles pages convertissent.
   const page = String(data.page || '').slice(0, 120) || 'inconnue';
   const lang = data.lang === 'en' ? 'en' : 'fr';
+  // Prix calculé par assets/prix.js au moment de la demande (vide si le calculateur n'a pas trouvé l'adresse).
+  const prix = String(data.prix || '').slice(0, 240) || 'non calculé';
   // Référence lisible, reprise dans l'objet des deux emails : une réservation = un email « [Réservation TA-...] ».
   const now = new Date();
   const ref = `TA-${now.toISOString().slice(2, 10).replace(/-/g, '')}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
@@ -46,6 +48,7 @@ Adresse de départ : ${adresse}
 Date : ${date}
 Heure : ${heure}
 Passagers : ${passagersLabel}
+Prix affiché : ${prix}
 
 Contact
 -------

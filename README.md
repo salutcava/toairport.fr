@@ -14,6 +14,7 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
 | `en/paris-airport-taxi-fares/`, `en/orly-airport-taxi/`, `en/cdg-airport-taxi/` | Version anglaise (voir « Version anglaise ») |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
+| `assets/prix.js` | Calculateur de prix des formulaires et grille tarifaire `TARIFS` (voir « Calculateur de prix ») |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
 | `docs/` | Documents de travail SEO (fiche Google, partenaires). Bloqués en ligne par `netlify.toml`, comme `README.md`, `package.json` et `netlify/`, mais visibles sur GitHub : le dépôt est public. |
@@ -40,7 +41,7 @@ Arrêté du 24 décembre 2025 relatif aux tarifs des courses de taxi pour 2026 (
 - La prise en charge (4,48 € au plus) concerne les courses au compteur, pas les forfaits.
 - Les forfaits ne s'appliquent qu'aux adresses dans Paris.
 
-Les montants, l'année et la date de l'arrêté apparaissent sur toutes les pages (title, meta, JSON-LD, contenu, pied de page). À chaque nouvel arrêté annuel, tout mettre à jour d'un coup : `grep -rn "2026\|24 décembre 2025" --include=index.html .`
+Les montants sont aussi dans le bloc `TARIFS` de `assets/prix.js`, qui calcule le prix affiché dans les formulaires. Les montants, l'année et la date de l'arrêté apparaissent sur toutes les pages (title, meta, JSON-LD, contenu, pied de page). À chaque nouvel arrêté annuel, tout mettre à jour d'un coup : `grep -rn "2026\|24 décembre 2025" --include=index.html .`
 
 ## Blocs de contenu des pages trajet
 
@@ -51,6 +52,17 @@ Classes définies en fin de `assets/style.css`, à utiliser plutôt que des styl
 - `.see-also` : rangée de liens `.btn-ghost` sous une section.
 
 Chaque FAQ existe deux fois : en HTML (`.faq-item`) et dans le JSON-LD `FAQPage` du `<head>`. Les deux doivent rester identiques (le JSON-LD est en texte brut, sans liens).
+
+## Calculateur de prix
+
+`assets/prix.js` (chargé avant `main.js` sur toutes les pages avec formulaire) insère un encadré « Votre prix » sous le champ adresse de `#booking-form` :
+
+1. Code postal lu dans l'adresse saisie, sinon trouvé par l'API Géoplateforme (`https://data.geopf.fr/geocodage/search`, gratuite, sans clé, suggestions d'adresses dans un `<datalist>`). L'ancienne `api-adresse.data.gouv.fr` est dépréciée.
+2. Code postal 75001-75020 ou 75116 -> arrondissement -> rive -> forfait selon l'aéroport, déduit des champs `trajet` et `airport`. Hors Paris : « au compteur », sans montant.
+3. Supplément de réservation : immédiate (4 €) si la prise en charge est à moins de `delaiImmediateMin` minutes, sinon à l'avance (7 €), plus 5,50 € par passager au-delà de 4. Le total est présenté comme un maximum.
+4. Le détail du calcul part dans un champ caché `prix`, repris dans l'email opérateur (« Prix affiché »).
+
+Désactivé par `data-calc="off"` sur le formulaire (pages VTC et Orly ↔ CDG, sans forfait). Textes en anglais sur les pages `lang="en"`.
 
 ## Version anglaise
 

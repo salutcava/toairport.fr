@@ -199,3 +199,13 @@ footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid;
 @media (max-width: 1024px) {
   .info-grid { grid-template-columns: 1fr; gap: 2.5rem; }
 }
+
+/* Calculateur de prix (assets/prix.js), inséré sous le champ adresse des formulaires */
+.price-estimate { margin: -0.2rem 0 1.4rem; padding: 1rem 1.1rem; border: 1px solid rgba(201,169,110,0.22); border-radius: 3px; background: linear-gradient(180deg, rgba(201,169,110,0.08), rgba(201,169,110,0.02)); box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 18px 40px -24px rgba(201,169,110,0.35); }
+.pe-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
+.pe-label { font-size: 0.65rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); }
+.pe-price { font-family: var(--font-display); font-size: 2rem; line-height: 1; color: var(--white); }
+.pe-detail { font-size: 0.8rem; color: var(--white); margin-top: 0.35rem; line-height: 1.5; }
+.pe-extra { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.5; }
+.pe-extra:empty { display: none; }
+.price-estimate[data-state="idle"] .pe-detail, .price-estimate[data-state="searching"] .pe-detail, .price-estimate[data-state="notfound"] .pe-detail { color: var(--muted); }

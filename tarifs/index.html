@@ -123,9 +123,12 @@
     </div>
     <div style="display:flex;justify-content:center;">
       <form id="booking-form" class="booking-card" novalidate>
-        <h2 class="booking-title">Réservez votre course</h2>
-        <p class="booking-sub">Confirmation immédiate</p>
+        <h2 class="booking-title">Calculez votre prix</h2>
+        <p class="booking-sub">Prix exact selon votre adresse, puis réservation en un clic</p>
         <input type="hidden" name="trajet" value="Tarifs"/>
+        <div class="form-group"><label class="form-label">Aéroport</label>
+          <select name="airport" class="form-input"><option>Orly</option><option>CDG - Charles-de-Gaulle</option></select>
+        </div>
         <div class="form-group"><label class="form-label">Adresse de départ</label><input type="text" name="adresse" class="form-input" placeholder="Rue, arrondissement…" required/></div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Date</label><input type="date" id="dateInput" name="date" class="form-input" required/></div>
@@ -212,6 +215,7 @@
   <span class="footer-copy">© 2026 toAirport.fr - Taxis parisiens sous licence</span>
   <span class="footer-copy">Tarifs conformes à l'arrêté du 24 décembre 2025</span>
 </div>
+<script src="/assets/prix.js"></script>
 <script src="/assets/main.js"></script>
 </body>
 </html>
