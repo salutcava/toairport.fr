@@ -16,6 +16,7 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
+| `docs/` | Documents de travail SEO (fiche Google, partenaires). Bloqués en ligne par `netlify.toml`, comme `README.md`, `package.json` et `netlify/`, mais visibles sur GitHub : le dépôt est public. |
 
 Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
 
