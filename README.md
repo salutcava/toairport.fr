@@ -85,6 +85,7 @@ Tout sort de `scripts/generer-logo.mjs`, lancé à la main par `npm run logo` (m
 |---|---|
 | `assets/logo/lumineux.svg` | Logo complet, fond transparent : en-tête (52 px de haut) et pied de page (80 px) de toutes les pages, en `<img>` avec `alt="toAirport.fr"` |
 | `assets/logo/lumineux-1200.png` | Logo complet en PNG, fond transparent (documents, réseaux, partenaires) |
+| `assets/logo/lumineux-carre-1200.png` | Logo complet centré dans un carré 1200×1200, fond transparent (avatars, plateformes qui demandent un carré) |
 | `assets/logo/icone.svg`, `icone-512.png` | Icône carrée « tA » dans le dôme |
 | `assets/logo/icone-transparente-512.png` | Dôme « tA » seul, fond transparent |
 | `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Icônes du navigateur, déclarées dans le `<head>` de chaque page |

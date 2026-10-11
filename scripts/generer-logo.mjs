@@ -13,6 +13,7 @@
  *   assets/logo/icone.svg           icône carrée « tA » (favicon, avatar)
  *   assets/logo/icone-512.png       icône en PNG
  *   assets/logo/lumineux-1200.png   logo complet en PNG, fond transparent
+ *   assets/logo/lumineux-carre-1200.png  logo complet centré dans un carré, fond transparent
  *   assets/logo/icone-transparente-512.png  dôme « tA » seul, fond transparent
  *   assets/logo/gmb-logo.png        logo fiche Google, 720×720, lisible dans le rond
  *   assets/logo/gmb-couverture.jpg  couverture fiche Google, 1080×608
@@ -141,6 +142,8 @@ await copyFile(join(DOSSIER, 'icone.svg'), join(RACINE, 'favicon.svg'))
 
 // PNG à fond transparent
 sips(join(DOSSIER, 'lumineux.svg'), 1200, join(DOSSIER, 'lumineux-1200.png'))
+await writeFile(join(tmp, 'lumineux-carre.svg'), svg('-10 -85 320 320', lumineux()))
+sips(join(tmp, 'lumineux-carre.svg'), 1200, join(DOSSIER, 'lumineux-carre-1200.png'))
 await writeFile(join(tmp, 'icone-transparente.svg'), svg('0 0 512 512', icone({ fond: false })))
 sips(join(tmp, 'icone-transparente.svg'), 512, join(DOSSIER, 'icone-transparente-512.png'))
 
