@@ -3,5 +3,8 @@
   "version": "1.0.0",
   "dependencies": {
     "nodemailer": "^6.9.0"
+  },
+  "scripts": {
+    "images": "node --env-file-if-exists=.env.local scripts/generer-images.mjs ./assets/images"
   }
 }

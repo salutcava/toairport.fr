@@ -14,10 +14,12 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
 | `en/paris-airport-taxi-fares/`, `en/orly-airport-taxi/`, `en/cdg-airport-taxi/` | Version anglaise (voir « Version anglaise ») |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
+| `assets/anim.js`, `assets/vendor/gsap/` | Mouvement (voir « Images et mouvement ») |
+| `assets/images/`, `scripts/` | Images d'ambiance et leur génération (voir « Images et mouvement ») |
 | `assets/prix.js` | Calculateur de prix des formulaires et grille tarifaire `TARIFS` (voir « Calculateur de prix ») |
 | `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
 | `sitemap.xml`, `robots.txt` | Référencement |
-| `docs/` | Documents de travail SEO (fiche Google, partenaires). Bloqués en ligne par `netlify.toml`, comme `README.md`, `package.json` et `netlify/`, mais visibles sur GitHub : le dépôt est public. |
+| `docs/` | Documents de travail SEO (fiche Google, partenaires). Bloqués en ligne par `netlify.toml`, comme `README.md`, `package.json`, `scripts/` et `netlify/`, mais visibles sur GitHub : le dépôt est public. |
 
 Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
 
@@ -52,6 +54,21 @@ Classes définies en fin de `assets/style.css`, à utiliser plutôt que des styl
 - `.see-also` : rangée de liens `.btn-ghost` sous une section.
 
 Chaque FAQ existe deux fois : en HTML (`.faq-item`) et dans le JSON-LD `FAQPage` du `<head>`. Les deux doivent rester identiques (le JSON-LD est en texte brut, sans liens).
+
+## Images et mouvement
+
+**Images.** Générées sur fal.ai (`fal-ai/flux-pro/v1.1-ultra`) par `npm run images` (ou `npm run images -- nom1,nom2`), avec `FAL_KEY` dans `.env.local` (jamais commité). Script manuel, hors déploiement : les pages n'appellent jamais fal.ai. Un suffixe de style commun (nuit, noir profond, lumières dorées) garde les images cohérentes entre elles. Après génération : conversion WebP avec `cwebp` (commandes en tête de `scripts/generer-images.mjs`), versions `-m.webp` de 900 px pour le mobile, relecture de chaque image avant commit. Seuls les `.webp` se commitent : les `.jpg` et `.png` bruts sont ignorés par git.
+
+toAirport est une plateforme de taxis indépendants, sans flotte : les images sont du décor (Paris la nuit, route d'aéroport, quai de Seine), jamais une fausse photo du service.
+
+| Image | Usage |
+|---|---|
+| `paris-nuit(.webp, -m.webp)` | Fond des hero : accueil, tarifs, gares, réservation (`.hero-media--paris`) |
+| `route-aeroport(.webp, -m.webp)` | Fond des hero des pages trajet et anglaises aéroport (`.hero-media--route`) |
+| `quai-seine.webp` | Fond de la carte de la Seine, chargé à l'approche (`.is-near`) |
+| `texture-grain.webp` | Grain carrelé sur toute la page (`body::before`, overlay), produit par `scripts/texture-carrelable.py` |
+
+**Mouvement.** `assets/anim.js` charge GSAP 3.15 (cœur, ScrollTrigger, DrawSVG, hébergés dans `assets/vendor/gsap/`) **après l'événement `load`**, pour ne pas retarder la police du titre qui fait le LCP. Il anime la parallaxe des `.hero-media`, le tracé de la carte `.seine-map` au défilement (accueil, tarifs, tarifs anglais) et le compteur des `.tarif-price`. Rien ne bouge avec `prefers-reduced-motion`. Mesure Lighthouse mobile en local avant/après : accueil 100 -> 94-99, LCP 1,5 s -> 2,0-2,6 s.
 
 ## Calculateur de prix
 

@@ -105,6 +105,7 @@
 </nav>
 
 <div class="page-hero">
+  <div class="hero-media hero-media--paris" aria-hidden="true"></div>
   <div class="page-hero-inner">
     <div>
       <nav class="breadcrumb"><a href="/">Accueil</a> <span>/</span> Tarifs officiels 2026</nav>
@@ -193,6 +194,36 @@
   </div>
 </section>
 
+<!-- CARTE SEINE (animée par assets/anim.js) -->
+<section class="section seine-section">
+  <div class="seine-bg" aria-hidden="true"></div>
+  <div class="seine-inner">
+    <div><div class="section-label">Comment se calcule le prix</div><h2 class="section-title">La Seine<br/><em>fixe le prix.</em></h2>
+      <p class="info-text">Au nord du fleuve, la rive droite ; au sud, la rive gauche. Les forfaits aéroport ne dépendent que de ça : CDG est moins cher depuis la rive droite, Orly depuis la rive gauche.</p><p class="info-note">Un doute sur la rive de votre adresse ? Saisissez-la dans le formulaire de réservation : le prix s'affiche aussitôt.</p>
+    </div>
+    <svg class="seine-map" viewBox="0 0 800 620" role="img" aria-labelledby="seine-map-title">
+      <title id="seine-map-title">Carte de Paris : la Seine sépare la rive droite de la rive gauche ; CDG au nord-est, Orly au sud.</title>
+      <defs>
+        <clipPath id="clip-paris"><path d="M232 238 C 236 176 300 128 390 120 C 480 112 560 140 598 196 C 628 240 626 300 596 340 C 560 388 488 412 400 414 C 312 416 246 384 226 330 C 216 300 228 270 232 238 Z"/></clipPath>
+      </defs>
+      <g clip-path="url(#clip-paris)">
+        <path class="rive rive-droite" d="M180 80 L660 80 L660 352 C 620 352 596 340 560 314 C 520 286 470 262 420 252 C 370 244 320 254 280 280 C 248 302 224 330 200 356 L180 356 Z"/>
+        <path class="rive rive-gauche" d="M200 356 C 224 330 248 302 280 280 C 320 254 370 244 420 252 C 470 262 520 286 560 314 C 596 340 620 352 660 352 L660 460 L180 460 Z"/>
+      </g>
+      <path class="paris" d="M232 238 C 236 176 300 128 390 120 C 480 112 560 140 598 196 C 628 240 626 300 596 340 C 560 388 488 412 400 414 C 312 416 246 384 226 330 C 216 300 228 270 232 238 Z"/>
+      <path class="seine" d="M660 352 C 620 352 596 340 560 314 C 520 286 470 262 420 252 C 370 244 320 254 280 280 C 248 302 224 330 200 356 C 186 372 176 392 170 412"/>
+      <text class="label-strong rive-label" x="330" y="200" text-anchor="middle">Rive droite</text>
+      <text class="label-strong rive-label" x="310" y="356" text-anchor="middle">Rive gauche</text>
+      <path class="route route-cdg" d="M500 196 C 560 160 620 118 690 66"/>
+      <path class="route route-orly" d="M470 340 C 466 410 458 480 452 552"/>
+      <circle class="airport" cx="690" cy="66" r="9"/>
+      <circle class="airport" cx="452" cy="552" r="9"/>
+      <g class="chip chip-cdg" transform="translate(452 14)"><rect width="300" height="34" rx="2"/><text x="14" y="22"><tspan class="gold">CDG</tspan>  Rive droite 56 € · Rive gauche 65 €</text></g>
+      <g class="chip chip-orly" transform="translate(476 572)"><rect width="300" height="34" rx="2"/><text x="14" y="22"><tspan class="gold">Orly</tspan>  Rive droite 45 € · Rive gauche 36 €</text></g>
+    </svg>
+  </div>
+</section>
+
 <!-- FAQ -->
 <section class="section reveal">
   <div class="section-header"><div><div class="section-label">Questions fréquentes</div><h2 class="section-title">Tarifs officiels 2026 :<br/><em>vos questions</em></h2></div></div>
@@ -217,5 +248,6 @@
 </div>
 <script src="/assets/prix.js"></script>
 <script src="/assets/main.js"></script>
+<script src="/assets/anim.js" defer></script>
 </body>
 </html>

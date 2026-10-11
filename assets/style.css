@@ -209,3 +209,53 @@ footer { border-top: 1px solid var(--border); padding: 4rem 6rem; display: grid;
 .pe-extra { font-size: 0.72rem; color: var(--muted); margin-top: 0.3rem; line-height: 1.5; }
 .pe-extra:empty { display: none; }
 .price-estimate[data-state="idle"] .pe-detail, .price-estimate[data-state="searching"] .pe-detail, .price-estimate[data-state="notfound"] .pe-detail { color: var(--muted); }
+
+/* ── Matière et mouvement ─────────────────────────────────────────────
+   Grain carrelé (assets/images/texture-grain.webp, gris 128 en overlay : seules les
+   variations se voient), photos de fond des hero (.hero-media), ombres en deux
+   couches, carte de la Seine (.seine-map). Les animations sont dans assets/anim.js. */
+body::before { content: ''; position: fixed; inset: 0; z-index: 300; pointer-events: none; background: url(/assets/images/texture-grain.webp) repeat; background-size: 256px; mix-blend-mode: overlay; opacity: 0.55; }
+
+.hero-media { position: absolute; left: 0; right: 0; top: -12%; bottom: -12%; z-index: 0; pointer-events: none; background-size: cover; background-position: center 60%; will-change: transform; }
+.hero-media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,10,11,0.97) 0%, rgba(10,10,11,0.82) 42%, rgba(10,10,11,0.55) 100%), linear-gradient(0deg, var(--black) 0%, rgba(10,10,11,0) 35%); }
+.hero-media--paris { background-image: url(/assets/images/paris-nuit.webp); }
+.hero-media--route { background-image: url(/assets/images/route-aeroport.webp); background-position: center 70%; }
+.hero-section > .hero-content, .hero-section > .hero-form { z-index: 2; }
+@media (max-width: 640px) {
+  .hero-media--paris { background-image: url(/assets/images/paris-nuit-m.webp); }
+  .hero-media--route { background-image: url(/assets/images/route-aeroport-m.webp); }
+}
+
+/* Ombres construites : un contact serré qui pose l'objet, une diffuse large qui lui donne sa hauteur. */
+.booking-card { box-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 2px 4px rgba(0,0,0,0.45), 0 30px 60px -12px rgba(0,0,0,0.85), 0 60px 120px -40px rgba(201,169,110,0.18); background: linear-gradient(180deg, #1a1a1f 0%, var(--card) 40%); }
+.tarif-grid { box-shadow: 0 1px 2px rgba(0,0,0,0.6), 0 40px 80px -30px rgba(0,0,0,0.9); }
+.tarif-card { transition: background 0.25s, transform 0.35s cubic-bezier(.2,.7,.2,1), box-shadow 0.35s; }
+.tarif-card:hover { transform: translateY(-4px); box-shadow: 0 2px 3px rgba(0,0,0,0.6), 0 24px 48px -16px rgba(0,0,0,0.9); z-index: 1; }
+.tarif-price { text-shadow: 0 0 28px rgba(201,169,110,0.25); }
+
+/* Carte de la Seine */
+.seine-section { position: relative; overflow: hidden; }
+.seine-section .seine-bg { position: absolute; left: 0; right: 0; top: -15%; bottom: -15%; background: center/cover; opacity: 0.22; will-change: transform; }
+/* Photo chargée à l'approche seulement (classe posée par assets/anim.js) : elle est sous la ligne de flottaison. */
+.seine-section.is-near .seine-bg { background-image: url(/assets/images/quai-seine.webp); }
+.seine-section .seine-bg::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, var(--black) 0%, rgba(10,10,11,0.4) 30%, rgba(10,10,11,0.4) 70%, var(--black) 100%); }
+.seine-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 0.8fr 1.2fr; gap: 4rem; align-items: center; }
+.seine-map { width: 100%; height: auto; overflow: visible; }
+.seine-map .paris { fill: rgba(255,255,255,0.025); stroke: rgba(245,244,240,0.35); stroke-width: 1.2; stroke-dasharray: 3 5; }
+.seine-map .rive-droite { fill: rgba(245,244,240,0.05); }
+.seine-map .rive-gauche { fill: rgba(201,169,110,0.2); }
+.seine-inner .section-title { margin-bottom: 1.8rem; }
+.seine-map .seine { fill: none; stroke: #7fa7c9; stroke-width: 5; stroke-linecap: round; opacity: 0.9; }
+.seine-map .route { fill: none; stroke: var(--gold); stroke-width: 1.6; stroke-linecap: round; }
+.seine-map .airport { fill: var(--black); stroke: var(--gold); stroke-width: 1.5; }
+.seine-map .label { font-family: var(--font-body); font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; fill: var(--muted); }
+.seine-map .label-strong { font-family: var(--font-display); font-size: 26px; fill: var(--white); }
+.seine-map .chip rect { fill: #16161a; stroke: rgba(201,169,110,0.4); }
+.seine-map .chip text { font-family: var(--font-body); font-size: 13px; fill: var(--white); }
+.seine-map .chip .gold { fill: var(--gold); }
+@media (max-width: 1024px) { .seine-inner { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .hero-media, .seine-section .seine-bg { will-change: auto; }
+}
