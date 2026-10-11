@@ -84,7 +84,9 @@ Tout sort de `scripts/generer-logo.mjs`, lancé à la main par `npm run logo` (m
 | Fichier | Usage |
 |---|---|
 | `assets/logo/lumineux.svg` | Logo complet, fond transparent : en-tête (52 px de haut) et pied de page (80 px) de toutes les pages, en `<img>` avec `alt="toAirport.fr"` |
+| `assets/logo/lumineux-1200.png` | Logo complet en PNG, fond transparent (documents, réseaux, partenaires) |
 | `assets/logo/icone.svg`, `icone-512.png` | Icône carrée « tA » dans le dôme |
+| `assets/logo/icone-transparente-512.png` | Dôme « tA » seul, fond transparent |
 | `favicon.svg`, `favicon.ico`, `apple-touch-icon.png` | Icônes du navigateur, déclarées dans le `<head>` de chaque page |
 | `assets/logo/gmb-logo.png` | Logo de la fiche Google (720×720, le lumineux tient dans le rond que Google découpe) |
 | `assets/logo/gmb-couverture.jpg` | Photo de couverture de la fiche Google (1080×608) |

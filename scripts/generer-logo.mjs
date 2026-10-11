@@ -12,6 +12,8 @@
  *   assets/logo/lumineux.svg        logo complet, fond transparent (en-tête, pied de page)
  *   assets/logo/icone.svg           icône carrée « tA » (favicon, avatar)
  *   assets/logo/icone-512.png       icône en PNG
+ *   assets/logo/lumineux-1200.png   logo complet en PNG, fond transparent
+ *   assets/logo/icone-transparente-512.png  dôme « tA » seul, fond transparent
  *   assets/logo/gmb-logo.png        logo fiche Google, 720×720, lisible dans le rond
  *   assets/logo/gmb-couverture.jpg  couverture fiche Google, 1080×608
  *   assets/og-image.jpg             image de partage, 1200×630
@@ -136,6 +138,11 @@ const svgIcone = svg('0 0 512 512', icone(), fondIcone)
 await writeFile(join(DOSSIER, 'lumineux.svg'), svgLumineux)
 await writeFile(join(DOSSIER, 'icone.svg'), svgIcone)
 await copyFile(join(DOSSIER, 'icone.svg'), join(RACINE, 'favicon.svg'))
+
+// PNG à fond transparent
+sips(join(DOSSIER, 'lumineux.svg'), 1200, join(DOSSIER, 'lumineux-1200.png'))
+await writeFile(join(tmp, 'icone-transparente.svg'), svg('0 0 512 512', icone({ fond: false })))
+sips(join(tmp, 'icone-transparente.svg'), 512, join(DOSSIER, 'icone-transparente-512.png'))
 
 // Icônes PNG et favicon.ico
 sips(join(DOSSIER, 'icone.svg'), 512, join(DOSSIER, 'icone-512.png'))
