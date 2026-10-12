@@ -1,22 +1,23 @@
-# Fiche Google Business Profile - textes prêts à coller
+# Fiche Google Business Profile
 
-À créer sur https://business.google.com avec le compte Google de l'activité.
+Fiche créée et validée sur https://business.google.com (code de magasin 07647031418263226020). Ce document reflète ce qui est en ligne au 12 octobre 2026. Toute modification faite dans la fiche se reporte ici.
 
 ## Identité
 
 | Champ | Valeur |
 |---|---|
-| Nom | Le nom commercial réel du groupe, sans mot-clé ajouté (pas de « Taxi Orly CDG pas cher »). Le même nom doit figurer sur le site et dans les mentions légales. |
-| Catégorie principale | Service de taxis |
-| Catégories secondaires | Service de navettes pour l'aéroport |
+| Nom | toAirport, sans mot-clé ajouté : Google l'interdit et peut suspendre la fiche. L'ancien nom « ToAirport - Taxi airport from/to city » a été remplacé le 12 octobre 2026. |
+| Catégorie principale | Service de taxi |
+| Catégories secondaires | Service de navette aéroport |
 | Type | Établissement de services sans adresse visible (on se déplace chez le client) |
-| Zone desservie | Paris, Orly, Roissy-en-France (Aéroport Charles-de-Gaulle) |
+| Zones desservies | Paris, Île-de-France, Orly, Roissy-en-France. Vatry et Beauvais ont été retirés le 12 octobre 2026 : le site ne les dessert pas. |
+| Chat | https://wa.me/33761466823 |
 | Téléphone | 07 61 46 68 23 |
 | Site web | https://toairport.fr/ |
-| Horaires | Ouvert 24h/24, 7j/7 |
+| Horaires | 24h/24, du lundi au dimanche |
 | Attributs | Paiement par carte, réservation en ligne |
 
-L'adresse est demandée pour la validation mais n'est pas affichée. Google valide en général par vidéo (montrer un véhicule, la licence, un document au nom de l'activité) ou par courrier.
+L'adresse a servi à la validation et n'est pas affichée.
 
 ## Logo et couverture
 
@@ -27,26 +28,45 @@ Les deux se régénèrent avec `npm run logo` (voir la section « Logo » du REA
 
 ## Description (750 caractères maximum)
 
-> Groupe de taxis parisiens pour les transferts entre Paris et les aéroports d'Orly et de Roissy-Charles-de-Gaulle, 24h/24. Les courses Paris ↔ aéroport sont au forfait officiel fixé par arrêté : Orly 36 € (rive gauche) ou 45 € (rive droite), CDG 56 € (rive droite) ou 65 € (rive gauche), au même prix de jour comme de nuit, bagages et péages inclus. Réservation en ligne ou par téléphone, chauffeur avec pancarte à votre nom en zone Arrivées, suivi du vol en cas de retard. Prise en charge dans toutes les gares parisiennes : Montparnasse, Austerlitz, gare de Lyon, gare du Nord. Paiement par carte bancaire ou en espèces, facture sur demande. Transferts Orly ↔ CDG au compteur.
+> toAirport réserve votre taxi entre Paris et les aéroports d'Orly et de Roissy-Charles-de-Gaulle, 24h/24 et 7j/7, avec des taxis parisiens sous licence. Les courses Paris ↔ aéroport sont au forfait officiel : Orly 36 € (rive gauche) ou 45 € (rive droite), CDG 56 € (rive droite) ou 65 € (rive gauche), même prix de jour comme de nuit, bagages et péages inclus. Réservation en ligne ou par téléphone. À l'arrivée, le chauffeur suit votre vol et vous attend en zone Arrivées avec une pancarte à votre nom. Prise en charge à domicile, à l'hôtel et dans les gares parisiennes : Montparnasse, Austerlitz, gare de Lyon, gare du Nord. Transferts Orly ↔ CDG au compteur. Paiement par carte ou en espèces, facture sur demande.
+
+toAirport ne possède ni flotte ni chauffeurs : la description ne doit jamais parler de « nos véhicules » ou de « notre flotte ».
 
 ## Services (onglet Services, avec prix)
 
-| Service | Prix | Description courte |
+Saisis dans la catégorie « Service de taxi », chacun avec une description qui reprend le forfait, le sens et « bagages et péages inclus ».
+
+| Service | Prix |
+|---|---|
+| Taxi Paris ↔ Orly, forfait rive gauche | 36 € (fixe) |
+| Taxi Paris ↔ Orly, forfait rive droite | 45 € (fixe) |
+| Taxi Paris ↔ CDG, forfait rive droite | 56 € (fixe) |
+| Taxi Paris ↔ CDG, forfait rive gauche | 65 € (fixe) |
+| Taxi gare Montparnasse ↔ Orly | 36 € (fixe) |
+| Taxi Orly ↔ CDG, au compteur | Aucun prix, la description précise « au compteur, prix estimé à la réservation » |
+
+## Publications programmées
+
+Dix posts de type « Actualité », un par semaine, le lundi à 9 h. Le premier est en ligne depuis le 12 octobre 2026, les neuf autres sont programmés dans la fiche (menu « Posts »). Aucun n'a de photo.
+
+| Date | Sujet | Bouton |
 |---|---|---|
-| Taxi Paris ↔ Orly, rive gauche | 36 € | Forfait officiel, 5e, 6e, 7e, 13e, 14e, 15e arrondissements |
-| Taxi Paris ↔ Orly, rive droite | 45 € | Forfait officiel, 1er-4e, 8e-12e, 16e-20e arrondissements |
-| Taxi Paris ↔ CDG, rive droite | 56 € | Forfait officiel, 1er-4e, 8e-12e, 16e-20e arrondissements |
-| Taxi Paris ↔ CDG, rive gauche | 65 € | Forfait officiel, 5e, 6e, 7e, 13e, 14e, 15e arrondissements |
-| Taxi gare Montparnasse ↔ Orly | 36 € | Forfait officiel, dans les deux sens |
-| Taxi Orly ↔ CDG | Au compteur | Transfert entre aéroports, estimation à la réservation |
+| 12/10/2026 (en ligne) | Forfaits 2026 Orly et CDG | En savoir plus, /tarifs/ |
+| 19/10/2026 | Gare Montparnasse ↔ Orly, 36 €, 25 à 35 min | Réserver, /taxi-montparnasse-orly/ |
+| 26/10/2026 | Suivi de vol, pancarte en zone Arrivées | Réserver, /reservation/ |
+| 02/11/2026 | Paris → CDG, 56 € ou 65 € par arrondissement | En savoir plus, /taxi-paris-cdg/ |
+| 09/11/2026 | Paris → Orly, 36 € ou 45 € par arrondissement | En savoir plus, /taxi-paris-orly/ |
+| 16/11/2026 | Gare de Lyon ↔ Orly, 45 €, 30 à 40 min | Réserver, /taxi-gare-de-lyon-orly/ |
+| 23/11/2026 | Gare d'Austerlitz ↔ Orly, 36 €, 25 à 35 min | Réserver, /taxi-austerlitz-orly/ |
+| 30/11/2026 | Orly ↔ CDG au compteur, environ 50 km, 45 à 75 min | Réserver, /taxi-orly-cdg/ |
+| 07/12/2026 | Vols tôt ou tard, même forfait la nuit | Réserver, /reservation/ |
+| 14/12/2026 | Paiement carte, espèces ou virement, facture | Réserver, /reservation/ |
 
-## Trois premières publications
+Règles suivies, à garder pour la série suivante (à partir du 21/12/2026) :
 
-1. **Tarifs 2026.** « Forfaits taxi aéroport 2026 : Orly 36 € ou 45 €, CDG 56 € ou 65 €, même prix de jour comme de nuit. Le détail par arrondissement : » + bouton « En savoir plus » vers https://toairport.fr/tarifs/
-2. **Gare Montparnasse ↔ Orly.** « Gare Montparnasse ↔ Orly en taxi : 36 € au forfait, 25 à 35 minutes, dans les deux sens. » + bouton « Réserver » vers https://toairport.fr/taxi-montparnasse-orly/
-3. **Suivi de vol.** « Arrivée à Orly ou CDG : le chauffeur suit votre vol et vous attend en zone Arrivées avec une pancarte à votre nom, retard compris. » + bouton « Réserver » vers https://toairport.fr/reservation/
-
-Une publication par semaine ou toutes les deux semaines suffit. Elle peut reprendre une page du site.
+- Chaque chiffre vient d'une page du site (prix, durées, moyens de paiement). Aucune promesse que le site ne tient pas noir sur blanc : ni attente gratuite, ni conditions d'annulation tant qu'elles ne sont pas confirmées.
+- Pas de numéro de téléphone dans le texte : Google refuse souvent ces posts, et la fiche l'affiche déjà.
+- Chaque post renvoie vers la page du site qui parle du même trajet.
 
 ## Demande d'avis (SMS après la course)
 
