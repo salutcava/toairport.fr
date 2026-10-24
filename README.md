@@ -149,4 +149,23 @@ Modèle : `taxi-montparnasse-orly/index.html`. Une page par gare et par aéropor
 2. Prix selon la rive de la gare (voir tableau ci-dessus).
 3. Ajouter la page à `sitemap.xml` avec un `<lastmod>`.
 4. Ajouter le lien dans la colonne « Trajets » du pied de page de toutes les pages, dans la liste des gares des pages trajet concernées et dans `.see-also` de `tarifs/`.
-5. Après déploiement, demander l'indexation de l'URL dans Search Console (Inspection d'URL).
+5. Après déploiement, lancer `npm run check:live` puis demander l'indexation de l'URL dans Search Console (Inspection d'URL).
+
+## Déploiement et vérification en ligne
+
+Un seul projet Netlify publie le site : `cerulean-taffy-d66b89` (domaine toairport.fr). Offre gratuite : 300 crédits par période (du 3 au 2 du mois suivant), un déploiement de production en coûte 15, soit une vingtaine de pushs par mois. Crédits épuisés = les pushs sont marqués « Skipped » dans Netlify et le site en ligne reste sur le dernier déploiement réussi, sans erreur visible côté GitHub. C'est arrivé le 12 octobre 2026 : un second projet Netlify branché sur le même dépôt doublait la consommation.
+
+`npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
+
+## Répartition des requêtes de prix
+
+Une requête, une page, pour éviter que deux pages se disputent la même recherche :
+
+| Requête visée | Page |
+|---|---|
+| tarif taxi aéroport, forfait aéroport | `/tarifs/` |
+| prix taxi Paris Orly | `/taxi-paris-orly/` |
+| taxi Paris CDG | `/taxi-paris-cdg/` |
+| taxi CDG Paris | `/taxi-cdg-paris/` |
+
+Les cartes de prix de `/tarifs/` sont des liens vers la page dédiée du trajet. Les titres écrivent « Paris Orly » ou « CDG Paris » sans flèche, comme les requêtes tapées ; la flèche reste dans les H1.

@@ -34,6 +34,7 @@ nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; a
 .tarif-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
 .tarif-card { background: var(--card); padding: 2.5rem 2rem; position: relative; transition: background 0.25s; }
 .tarif-card:hover { background: #1a1a20; }
+a.tarif-card { display: block; color: inherit; text-decoration: none; }
 .tarif-card::before { content: attr(data-airport); position: absolute; top: 1.5rem; right: 1.5rem; font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
 .tarif-route { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.2rem; }
 .tarif-price { font-family: var(--font-display); font-size: 3rem; font-weight: 500; line-height: 1; color: var(--white); margin-bottom: 0.3rem; }

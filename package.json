@@ -6,7 +6,8 @@
   },
   "scripts": {
     "images": "node --env-file-if-exists=.env.local scripts/generer-images.mjs ./assets/images",
-    "logo": "node scripts/generer-logo.mjs"
+    "logo": "node scripts/generer-logo.mjs",
+    "check:live": "node scripts/verifier-en-ligne.mjs"
   },
   "devDependencies": {
     "@fontsource/barlow": "^5.3.0",
