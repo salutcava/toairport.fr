@@ -2,6 +2,7 @@
 // Appelé par server/server.mjs sur POST /api/reservation, avec le corps JSON déjà lu.
 // Variables d'environnement : OVH_SMTP_HOST, OVH_SMTP_PORT, OVH_EMAIL_USER, OVH_EMAIL_PASS, RECIPIENT_EMAIL.
 import nodemailer from 'nodemailer';
+import { emailClient, emailOperateur } from './emails.mjs';
 
 // Renvoie { statusCode, body } ; `transport` sert aux tests, qui n'envoient rien.
 export async function traiterReservation(corps, { env = process.env, transport } = {}) {
@@ -15,7 +16,10 @@ export async function traiterReservation(corps, { env = process.env, transport }
     return { statusCode: 400, body: JSON.stringify({ error: 'Corps de requête invalide' }) };
   }
 
-  const { nom, email, telephone, adresse, date, heure, passagers, airport, trajet } = data;
+  // Champs du formulaire, en texte et bornés : ils finissent dans des emails.
+  const champ = (nom, max = 200) => String(data[nom] ?? '').trim().slice(0, max);
+  const [nom, email, telephone, adresse, date, heure, passagers, airport, trajet] =
+    ['nom', 'email', 'telephone', 'adresse', 'date', 'heure', 'passagers', 'airport', 'trajet'].map((c) => champ(c));
   // Page d'origine et langue envoyées par assets/main.js : servent à savoir quelles pages convertissent.
   const page = String(data.page || '').slice(0, 120) || 'inconnue';
   const lang = data.lang === 'en' ? 'en' : 'fr';
@@ -39,83 +43,23 @@ export async function traiterReservation(corps, { env = process.env, transport }
     },
   });
 
-  const trajetLabel = trajet || 'Non précisé';
-  const airportLabel = airport ? `\nAéroport / Terminal : ${airport}` : '';
-  const passagersLabel = passagers || '1';
-
-  const operatorBody = `
-Nouvelle demande de réservation ${ref} - toAirport.fr
-
-Trajet : ${trajetLabel}${airportLabel}
-Adresse de départ : ${adresse}
-Date : ${date}
-Heure : ${heure}
-Passagers : ${passagersLabel}
-Prix affiché : ${prix}
-
-Contact
--------
-Nom : ${nom}
-Email : ${email}
-Téléphone : ${telephone}
-
-Suivi
------
-Page d'origine : ${page}
-Langue : ${lang}
-  `.trim();
-
-  const clientBodyFr = `
-Bonjour ${nom},
-
-Nous avons bien reçu votre demande de réservation et vous recontacterons rapidement pour confirmer votre course.
-
-Récapitulatif (réf. ${ref})
--------------
-Trajet : ${trajetLabel}${airportLabel}
-Adresse de départ : ${adresse}
-Date : ${date} à ${heure}
-Passagers : ${passagersLabel}
-
-En cas de besoin, contactez-nous directement au 07 61 46 68 23.
-
-À bientôt,
-L'équipe toAirport.fr
-  `.trim();
-
-  const clientBodyEn = `
-Hello ${nom},
-
-We have received your booking request and will contact you shortly to confirm your ride.
-
-Summary (ref. ${ref})
--------------
-Route: ${trajetLabel}${airportLabel}
-Paris address: ${adresse}
-Date: ${date} at ${heure}
-Passengers: ${passagersLabel}
-
-If needed, call us directly on +33 7 61 46 68 23.
-
-Best regards,
-The toAirport.fr team
-  `.trim();
+  const demande = { ref, nom, email, telephone, adresse, date, heure, passagers, airport, trajet, prix, page, lang };
+  const pourOperateur = emailOperateur(demande);
+  const pourClient = emailClient(demande);
+  const expediteur = `toAirport.fr <${env.OVH_EMAIL_USER}>`;
 
   try {
     await transporter.sendMail({
-      from: `toAirport.fr <${env.OVH_EMAIL_USER}>`,
+      from: expediteur,
       to: env.RECIPIENT_EMAIL,
-      subject: `[Réservation ${ref}] ${trajetLabel} - ${nom} - ${date} ${heure}`,
-      text: operatorBody,
+      replyTo: email,
+      ...pourOperateur,
     });
 
     await transporter.sendMail({
-      from: `toAirport.fr <${env.OVH_EMAIL_USER}>`,
+      from: expediteur,
       to: email,
-      subject: lang === 'en'
-        ? `Your booking request ${ref} - toAirport.fr`
-        : `Votre demande de réservation ${ref} - toAirport.fr`,
-      text: lang === 'en' ? clientBodyEn : clientBodyFr,
+      ...pourClient,
     });
 
     return {

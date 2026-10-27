@@ -165,6 +165,15 @@ Depuis le 27 octobre 2026, le site tourne sur le VPS OVH `141.94.205.4`, piloté
 - **En local** : `npm start` (port 3000, `PORT` pour en changer). Sans variables SMTP, le formulaire répond une erreur 500 à l'envoi.
 - **Tests** : `npm test` (node:test, aucun envoi réel d'email). À lancer avant chaque push qui touche `server/`.
 
+## Emails de réservation
+
+`server/emails.mjs` fabrique les deux emails envoyés à chaque demande (`POST /api/reservation`), chacun en version texte et HTML :
+
+- **Opérateur** (vers `RECIPIENT_EMAIL`) : objet `[Réservation TA-...] trajet - nom - date heure` (inchangé, pour les filtres de messagerie), trajet et date en gros, lien Google Maps sur l'adresse, téléphone et email du client cliquables, détail complet du prix calculé, page d'origine et langue. `Reply-To` = email du client : « Répondre » lui écrit directement.
+- **Client**, en français ou en anglais selon la page : récapitulatif, prix estimé (seulement le total, « 43 € au plus » ; la ligne disparaît si le calculateur n'a rien trouvé), boutons Appeler et WhatsApp.
+
+Mise en page aux couleurs du site (noir `#0a0a0b`, doré `#c9a96e`), en tableaux et styles en ligne, polices système. Le logo est chargé depuis `https://toairport.fr/assets/logo/lumineux-1200.png` : ne pas déplacer ce fichier. Toute saisie du visiteur passe par `echapper()` avant d'entrer dans le HTML ; les tests (`npm test`) le vérifient, ainsi que le prix, la langue et le `Reply-To`. Pour relire un rendu, générer le HTML avec `emailClient()` / `emailOperateur()` et l'ouvrir dans un navigateur.
+
 ## Vérification en ligne
 
 `npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. `CHECK_BASE=https://toairport.vps.olivierlam.fr npm run check:live` vérifie la même liste sur une autre adresse (adresse d'essai, ou `http://localhost:3000`). Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
