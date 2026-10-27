@@ -179,5 +179,6 @@ Une requête, une page, pour éviter que deux pages se disputent la même recher
 | prix taxi Paris Orly | `/taxi-paris-orly/` |
 | taxi Paris CDG | `/taxi-paris-cdg/` |
 | taxi CDG Paris | `/taxi-cdg-paris/` |
+| taxi Montparnasse Orly (prix, forfait, temps de trajet) | `/taxi-montparnasse-orly/` |
 
-Les cartes de prix de `/tarifs/` sont des liens vers la page dédiée du trajet. Les titres écrivent « Paris Orly » ou « CDG Paris » sans flèche, comme les requêtes tapées ; la flèche reste dans les H1.
+Les cartes de prix de `/tarifs/` sont des liens vers la page dédiée du trajet. Pas de `aggregateRating` dans les données structurées : Google ne l'accepte pas sur `TaxiService` (erreur « Type d'objet non valide » dans Search Console) et une note doit reposer sur des avis vérifiables. Les titres écrivent « Paris Orly » ou « CDG Paris » sans flèche, comme les requêtes tapées ; la flèche reste dans les H1.
