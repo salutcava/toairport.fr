@@ -1,14 +1,17 @@
-const nodemailer = require('nodemailer');
+// Demande de réservation : un email à l'opérateur, un accusé de réception au client.
+// Appelé par server/server.mjs sur POST /api/reservation, avec le corps JSON déjà lu.
+// Variables d'environnement : OVH_SMTP_HOST, OVH_SMTP_PORT, OVH_EMAIL_USER, OVH_EMAIL_PASS, RECIPIENT_EMAIL.
+import nodemailer from 'nodemailer';
 
-exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: 'Method not allowed' }) };
-  }
-
+// Renvoie { statusCode, body } ; `transport` sert aux tests, qui n'envoient rien.
+export async function traiterReservation(corps, { env = process.env, transport } = {}) {
   let data;
   try {
-    data = JSON.parse(event.body);
+    data = JSON.parse(corps);
   } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: 'Corps de requête invalide' }) };
+  }
+  if (!data || typeof data !== 'object') {
     return { statusCode: 400, body: JSON.stringify({ error: 'Corps de requête invalide' }) };
   }
 
@@ -26,13 +29,13 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Champs obligatoires manquants' }) };
   }
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.OVH_SMTP_HOST,
-    port: parseInt(process.env.OVH_SMTP_PORT, 10),
+  const transporter = transport ?? nodemailer.createTransport({
+    host: env.OVH_SMTP_HOST,
+    port: parseInt(env.OVH_SMTP_PORT, 10),
     secure: true,
     auth: {
-      user: process.env.OVH_EMAIL_USER,
-      pass: process.env.OVH_EMAIL_PASS,
+      user: env.OVH_EMAIL_USER,
+      pass: env.OVH_EMAIL_PASS,
     },
   });
 
@@ -100,14 +103,14 @@ The toAirport.fr team
 
   try {
     await transporter.sendMail({
-      from: `toAirport.fr <${process.env.OVH_EMAIL_USER}>`,
-      to: process.env.RECIPIENT_EMAIL,
+      from: `toAirport.fr <${env.OVH_EMAIL_USER}>`,
+      to: env.RECIPIENT_EMAIL,
       subject: `[Réservation ${ref}] ${trajetLabel} - ${nom} - ${date} ${heure}`,
       text: operatorBody,
     });
 
     await transporter.sendMail({
-      from: `toAirport.fr <${process.env.OVH_EMAIL_USER}>`,
+      from: `toAirport.fr <${env.OVH_EMAIL_USER}>`,
       to: email,
       subject: lang === 'en'
         ? `Your booking request ${ref} - toAirport.fr`
@@ -126,4 +129,4 @@ The toAirport.fr team
       body: JSON.stringify({ error: 'Erreur lors de l\'envoi de l\'email' }),
     };
   }
-};
+}

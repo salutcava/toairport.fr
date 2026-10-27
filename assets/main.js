@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = en ? 'Sending…' : 'Envoi en cours…';
 
       try {
-        const res = await fetch('/.netlify/functions/reservation', {
+        const res = await fetch('/api/reservation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)

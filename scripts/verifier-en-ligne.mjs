@@ -1,10 +1,13 @@
 // Vérifie que chaque adresse du sitemap.xml local répond 200 en ligne, sans noindex.
 // Usage : npm run check:live (sortie en erreur si une page pose problème).
+// CHECK_BASE=https://toairport.vps.olivierlam.fr npm run check:live vérifie une autre adresse que toairport.fr.
 // Repère un déploiement qui n'est pas passé : une page présente dans le dépôt mais absente en ligne.
 import { readFileSync } from 'node:fs';
 
 const sitemap = readFileSync(new URL('../sitemap.xml', import.meta.url), 'utf8');
-const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+const base = process.env.CHECK_BASE?.replace(/\/$/, '');
+const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)]
+  .map((m) => (base ? m[1].replace('https://toairport.fr', base) : m[1]));
 
 let erreurs = 0;
 for (const url of urls) {

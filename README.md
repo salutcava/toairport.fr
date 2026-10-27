@@ -1,6 +1,6 @@
 # toairport.fr
 
-Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et les aéroports CDG et Orly, hébergé sur Netlify. Chaque `push` sur `main` déploie le site.
+Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et les aéroports CDG et Orly, servi par un petit serveur Node sur le VPS OVH (Coolify). Chaque `push` sur `main` déploie le site (voir « Hébergement »).
 
 ## Structure
 
@@ -19,11 +19,14 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `assets/images/`, `scripts/` | Images d'ambiance et leur génération (voir « Images et mouvement ») |
 | `assets/logo/`, `favicon.*`, `apple-touch-icon.png`, `assets/og-image.jpg` | Logo et ses déclinaisons, générés par `npm run logo` (voir « Logo ») |
 | `assets/prix.js` | Calculateur de prix des formulaires et grille tarifaire `TARIFS` (voir « Calculateur de prix ») |
-| `netlify/functions/reservation.js` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
+| `server/server.mjs` | Serveur de production : sert les pages, en-têtes de sécurité, redirections, `POST /api/reservation` |
+| `server/reservation.mjs` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
+| `server/server.test.mjs` | Tests du serveur et de la réservation (`npm test`) |
+| `Dockerfile` | Image construite par Coolify (Node 22, `npm ci --omit=dev`, fichiers internes retirés) |
 | `sitemap.xml`, `robots.txt` | Référencement |
-| `docs/` | Documents de travail SEO (fiche Google, partenaires). Bloqués en ligne par `netlify.toml`, comme `README.md`, `package.json`, `scripts/` et `netlify/`, mais visibles sur GitHub : le dépôt est public. |
+| `docs/` | Documents de travail SEO (fiche Google, partenaires). Jamais servis en ligne, comme `README.md`, `package.json`, `scripts/` et `server/` (absents de l'image et refusés par le serveur), mais visibles sur GitHub : le dépôt est public. |
 
-Variables d'environnement Netlify de la fonction : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
+Variables d'environnement de la ressource Coolify (modèle dans `.env.example`) : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
 
 ## Contact WhatsApp
 
@@ -151,11 +154,20 @@ Modèle : `taxi-montparnasse-orly/index.html`. Une page par gare et par aéropor
 4. Ajouter le lien dans la colonne « Trajets » du pied de page de toutes les pages, dans la liste des gares des pages trajet concernées et dans `.see-also` de `tarifs/`.
 5. Après déploiement, lancer `npm run check:live` puis demander l'indexation de l'URL dans Search Console (Inspection d'URL).
 
-## Déploiement et vérification en ligne
+## Hébergement
 
-Un seul projet Netlify publie le site : `cerulean-taffy-d66b89` (domaine toairport.fr). Offre gratuite : 300 crédits par période (du 3 au 2 du mois suivant), un déploiement de production en coûte 15, soit une vingtaine de pushs par mois. Crédits épuisés = les pushs sont marqués « Skipped » dans Netlify et le site en ligne reste sur le dernier déploiement réussi, sans erreur visible côté GitHub. C'est arrivé le 12 octobre 2026 : un second projet Netlify branché sur le même dépôt doublait la consommation.
+Depuis le 27 octobre 2026, le site tourne sur le VPS OVH `141.94.205.4`, piloté par Coolify, comme les autres sites du VPS. Avant, il était sur Netlify : l'offre gratuite (300 crédits par mois, 15 par déploiement) a bloqué toutes les mises en ligne du 12 octobre au 2 novembre sans aucune erreur visible côté GitHub, d'où le départ.
 
-`npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
+- **Déploiement** : un push sur `main` déclenche le webhook GitHub, Coolify reconstruit l'image du `Dockerfile` et la remplace sans coupure (une vingtaine de secondes). Bouton « Redeploy » dans Coolify pour relancer à la main.
+- **Domaines de la ressource Coolify** : `https://toairport.fr`, `https://www.toairport.fr` et `https://toairport.vps.olivierlam.fr` (adresse d'essai). Certificats Let's Encrypt gérés par Coolify, compression gzip activée dans la ressource.
+- **DNS** (zone OVH `toairport.fr`) : `toairport.fr` et `www` en A vers `141.94.205.4`. MX et TXT (mail OVH, validations Search Console) ne dépendent pas de l'hébergement.
+- **Serveur** (`server/server.mjs`, sans framework) : sert les dossiers du dépôt tels quels, redirige `/tarifs` vers `/tarifs/` et `www` vers le domaine nu, pose les en-têtes de sécurité (`X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`) et refuse les fichiers internes et les chemins commençant par un point. Le formulaire appelle `POST /api/reservation` (anciennement `/.netlify/functions/reservation`).
+- **En local** : `npm start` (port 3000, `PORT` pour en changer). Sans variables SMTP, le formulaire répond une erreur 500 à l'envoi.
+- **Tests** : `npm test` (node:test, aucun envoi réel d'email). À lancer avant chaque push qui touche `server/`.
+
+## Vérification en ligne
+
+`npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. `CHECK_BASE=https://toairport.vps.olivierlam.fr npm run check:live` vérifie la même liste sur une autre adresse (adresse d'essai, ou `http://localhost:3000`). Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
 
 ## Répartition des requêtes de prix
 
