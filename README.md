@@ -13,6 +13,8 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `taxi-orly-cdg/` | Transfert entre aéroports : pas de forfait, course au compteur |
 | `taxi-ou-uber-aeroport/`, `taxi-ou-ligne-14-orly/`, `taxi-ou-rer-b-cdg/` | Pages comparatives (voir « Pages comparatives ») |
 | `vtc-paris-cdg/`, `reservation/`, `mentions-legales/` | Autres pages |
+
+Éditeur du site : LAMSTER, EURL au capital de 1 €, SIRET 944 775 337 00016, 60 rue François Ier, 75008 Paris, gérant Olivier Lam (vérifié sur l'Annuaire des Entreprises le 28 octobre 2026). Ces informations sont dans `mentions-legales/`, avec les sous-traitants qui reçoivent les données du formulaire (OVH, Meta pour l'alerte WhatsApp) : un nouveau sous-traitant s'y ajoute.
 | `en/paris-airport-taxi-fares/`, `en/orly-airport-taxi/`, `en/cdg-airport-taxi/` | Version anglaise (voir « Version anglaise ») |
 | `assets/style.css`, `assets/main.js` | Styles et comportements communs (menu, FAQ, apparition au défilement, envoi du formulaire) |
 | `assets/anim.js`, `assets/vendor/gsap/` | Mouvement (voir « Images et mouvement ») |
