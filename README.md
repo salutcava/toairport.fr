@@ -20,13 +20,14 @@ Site statique (HTML/CSS/JS sans build) de réservation de taxi entre Paris et le
 | `assets/logo/`, `favicon.*`, `apple-touch-icon.png`, `assets/og-image.jpg` | Logo et ses déclinaisons, générés par `npm run logo` (voir « Logo ») |
 | `assets/prix.js` | Calculateur de prix des formulaires et grille tarifaire `TARIFS` (voir « Calculateur de prix ») |
 | `server/server.mjs` | Serveur de production : sert les pages, en-têtes de sécurité, redirections, `POST /api/reservation` |
-| `server/reservation.mjs` | Envoi des emails de réservation (opérateur et client) via SMTP OVH |
+| `server/reservation.mjs` | Traitement d'une demande : alerte WhatsApp puis emails (opérateur et client) via SMTP OVH |
+| `server/whatsapp.mjs` | Alerte WhatsApp à l'opérateur (API Cloud de Meta) et calcul du délai avant prise en charge (voir « Alerte WhatsApp ») |
 | `server/server.test.mjs` | Tests du serveur et de la réservation (`npm test`) |
 | `Dockerfile` | Image construite par Coolify (Node 22, `npm ci --omit=dev`, fichiers internes retirés) |
 | `sitemap.xml`, `robots.txt` | Référencement |
 | `docs/` | Documents de travail SEO (fiche Google, partenaires). Jamais servis en ligne, comme `README.md`, `package.json`, `scripts/` et `server/` (absents de l'image et refusés par le serveur), mais visibles sur GitHub : le dépôt est public. |
 
-Variables d'environnement de la ressource Coolify (modèle dans `.env.example`) : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes).
+Variables d'environnement de la ressource Coolify (modèle dans `.env.example`) : `OVH_SMTP_HOST`, `OVH_SMTP_PORT`, `OVH_EMAIL_USER`, `OVH_EMAIL_PASS`, `RECIPIENT_EMAIL` (boîte qui reçoit les demandes), et pour l'alerte WhatsApp `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID`, `WHATSAPP_ALERTE_TO`, `WHATSAPP_TEMPLATE` (facultative).
 
 ## Contact WhatsApp
 
@@ -169,8 +170,20 @@ Depuis le 27 octobre 2026, le site tourne sur le VPS OVH `141.94.205.4`, piloté
 
 `server/emails.mjs` fabrique les deux emails envoyés à chaque demande (`POST /api/reservation`), chacun en version texte et HTML :
 
-- **Opérateur** (vers `RECIPIENT_EMAIL`) : objet `[Réservation TA-...] trajet - nom - date heure` (inchangé, pour les filtres de messagerie), trajet et date en gros, lien Google Maps sur l'adresse, téléphone et email du client cliquables, détail complet du prix calculé, page d'origine et langue. `Reply-To` = email du client : « Répondre » lui écrit directement.
+- **Opérateur** (vers `RECIPIENT_EMAIL`) : objet `[Réservation TA-...] trajet - nom - date heure`, qui commence toujours par `[Réservation TA-...]` pour les filtres de messagerie. En titre, le trajet : celui du formulaire, ou « adresse → aéroport » quand le champ `trajet` ne nomme que la page (`Réservation`, `Accueil`, `Tarifs`). Sous le titre, la date et l'heure de **prise en charge**, libellées comme telles, avec le délai (« prise en charge dans 5 h 10 »). Lien Google Maps sur l'adresse, téléphone et email du client cliquables, détail complet du prix calculé. Pied : heure d'envoi de la demande, résultat de l'alerte WhatsApp, page d'origine et langue. `Reply-To` = email du client : « Répondre » lui écrit directement.
 - **Client**, en français ou en anglais selon la page : récapitulatif, prix estimé (seulement le total, « 43 € au plus » ; la ligne disparaît si le calculateur n'a rien trouvé), boutons Appeler et WhatsApp.
+
+**Course dans l'heure (URGENT).** Quand la prise en charge tombe dans 60 minutes ou moins (ou est déjà passée), calculé à l'heure de Paris : bandeau doré « URGENT, prise en charge dans 35 min » en tête de l'email opérateur, `URGENT - prise en charge dans 35 min` dans l'objet juste après `[Réservation TA-...]`, et l'email client dit que la course n'est pas encore confirmée, qu'on le rappelle, et quel numéro appeler sans rappel sous 10 minutes. Origine : le 28 octobre 2026, une demande pour une prise en charge 46 minutes plus tard est passée inaperçue, la date de prise en charge ressemblant à l'heure d'envoi du mail.
+
+## Alerte WhatsApp
+
+`server/whatsapp.mjs` envoie à chaque demande, avant les emails, un WhatsApp à l'opérateur par l'**API Cloud officielle de Meta** (pas de bibliothèque non officielle : Meta bannit les numéros pilotés ainsi). Le message reprend la référence, le délai (« URGENT, prise en charge dans 35 min »), le trajet, la prise en charge, l'adresse, les passagers, le prix et le client.
+
+- **Modèle Meta** `nouvelle_reservation` (catégorie Utilité, français, 9 variables dans l'ordre : référence, délai, trajet, prise en charge, adresse, passagers, prix, nom, téléphone). Un message envoyé en premier (hors fenêtre de 24 h) doit suivre un modèle validé par Meta. Changer le texte ou l'ordre des variables : créer un nouveau modèle dans le Gestionnaire WhatsApp, attendre sa validation, puis mettre son nom dans `WHATSAPP_TEMPLATE` et adapter `corpsAlerte()`.
+- **Variables** : `WHATSAPP_TOKEN` (jeton permanent d'un utilisateur système du portefeuille Meta ToAirport, droits `whatsapp_business_messaging` et `whatsapp_business_management` ; jamais commité), `WHATSAPP_PHONE_ID` (identifiant du numéro qui envoie), `WHATSAPP_ALERTE_TO` (numéros qui reçoivent, séparés par des virgules, format international), `WHATSAPP_TEMPLATE` (par défaut `nouvelle_reservation`).
+- **Sans `WHATSAPP_TOKEN`** (en local, par exemple), l'alerte est sautée sans bruit. **En cas d'échec** (jeton expiré, modèle refusé, Meta muet plus de 8 secondes), la réservation passe quand même et le pied de l'email opérateur porte « Alerte WhatsApp non envoyée : » suivi du message de Meta ; l'erreur part aussi dans les logs Coolify (`WhatsApp error:`).
+- **Comptes Meta** : portefeuille business ToAirport (`1148862648093932`), app développeur `toairport-centrale` (`1429494439363335`). Pour l'instant, le numéro qui envoie est le numéro de test de Meta (`WHATSAPP_PHONE_ID=1398356673364468`), qui ne peut écrire qu'à 5 numéros déclarés dans l'app (Cas d'utilisation, WhatsApp, Étape 1). Passer au vrai numéro de la centrale : l'ajouter dans le Gestionnaire WhatsApp, renseigner un moyen de paiement, recréer le modèle sur ce compte si besoin, changer `WHATSAPP_PHONE_ID`.
+- **Tests** : `npm test` couvre le calcul du délai (heure d'été, d'hiver, nuit du changement d'heure), le corps envoyé à Meta, les échecs et leur trace dans l'email, sans aucun appel réseau.
 
 Mise en page aux couleurs du site (noir `#0a0a0b`, doré `#c9a96e`), en tableaux et styles en ligne, polices système. Le logo est chargé depuis `https://toairport.fr/assets/logo/lumineux-1200.png` : ne pas déplacer ce fichier. Toute saisie du visiteur passe par `echapper()` avant d'entrer dans le HTML ; les tests (`npm test`) le vérifient, ainsi que le prix, la langue et le `Reply-To`. Pour relire un rendu, générer le HTML avec `emailClient()` / `emailOperateur()` et l'ouvrir dans un navigateur.
 

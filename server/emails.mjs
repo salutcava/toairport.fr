@@ -3,6 +3,9 @@
 // HTML d'email : tableaux, styles en ligne, polices système (Georgia, Helvetica), couleurs de fond
 // posées en attribut bgcolor pour que le mode sombre des messageries ne les inverse pas.
 // Le logo est chargé depuis toairport.fr : /assets/logo/lumineux-1200.png doit rester en ligne.
+// La demande arrive de server/reservation.mjs déjà enrichie : minutes (délai avant la prise en charge),
+// recuLe, trajetLisible, priseEnCharge, alerte (résultat de l'alerte WhatsApp).
+import { estUrgent, libelleDelai } from './whatsapp.mjs';
 
 const SITE = 'https://toairport.fr';
 const LOGO = `${SITE}/assets/logo/lumineux-1200.png`;
@@ -26,6 +29,7 @@ const TEXTES = {
     titre: 'Demande reçue',
     bonjour: (nom) => `Bonjour ${nom},`,
     intro: 'Nous avons bien reçu votre demande de réservation. Nous vous recontactons rapidement pour confirmer la course.',
+    introUrgent: (tel) => `Nous avons bien reçu votre demande. La course n'est pas encore confirmée : nous vous rappelons dans les minutes qui viennent. Sans appel de notre part sous 10 minutes, appelez le ${tel}.`,
     recap: 'Récapitulatif',
     reference: 'Référence', trajet: 'Trajet', terminal: 'Aéroport / terminal', adresse: 'Adresse de départ',
     date: 'Date', heure: 'Heure', passagers: 'Passagers', prix: 'Prix estimé',
@@ -41,6 +45,7 @@ const TEXTES = {
     titre: 'Request received',
     bonjour: (nom) => `Hello ${nom},`,
     intro: 'We have received your booking request and will contact you shortly to confirm your ride.',
+    introUrgent: (tel) => `We have received your request. Your ride is not confirmed yet: we will call you back within minutes. If we have not called you within 10 minutes, call ${tel}.`,
     recap: 'Summary',
     reference: 'Reference', trajet: 'Route', terminal: 'Airport / terminal', adresse: 'Paris address',
     date: 'Date', heure: 'Time', passagers: 'Passengers', prix: 'Estimated price',
@@ -59,7 +64,7 @@ export function echapper(valeur) {
 }
 
 // « 2026-10-28 » -> « mercredi 28 octobre 2026 » ; toute autre valeur est rendue telle quelle.
-function dateLisible(date, lang) {
+export function dateLisible(date, lang) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return date;
   const d = new Date(`${date}T12:00:00Z`);
   if (Number.isNaN(d.getTime())) return date;
@@ -77,6 +82,38 @@ function prixClient(prix, lang) {
   const total = /= (\d+(?:,\d+)?) € au plus/.exec(prix ?? '');
   if (total) return lang === 'en' ? `€${total[1].replace(',', '.')} maximum` : `${total[1]} € au plus`;
   return PRIX_CONNUS[prix]?.[lang] ?? null;
+}
+
+// Champs « trajet » qui nomment la page du formulaire et pas un trajet.
+const TRAJETS_GENERIQUES = new Set(['', 'Accueil', 'Tarifs', 'Réservation']);
+
+// Trajet pour le titre de l'email opérateur et l'alerte WhatsApp : celui du formulaire s'il en est un,
+// sinon « adresse → aéroport » (« Gare Montparnasse → Orly »).
+export function trajetLisible(d) {
+  const trajet = String(d.trajet ?? '').trim();
+  if (!TRAJETS_GENERIQUES.has(trajet)) return trajet;
+  const aeroport = String(d.airport ?? '').split(/\s[-—–]\s/)[0].trim();
+  if (d.adresse && aeroport) return `${d.adresse} → ${aeroport}`;
+  return trajet || 'Trajet non précisé';
+}
+
+// « mercredi 28 octobre 2026 à 12:50 »
+export const priseEnChargeLisible = (d) => `${dateLisible(d.date, 'fr')} à ${d.heure}`;
+
+// « mercredi 28 octobre 2026 à 12:04 », heure de Paris.
+function horodatage(instant) {
+  if (!(instant instanceof Date)) return null;
+  return new Intl.DateTimeFormat('fr-FR', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    timeZone: 'Europe/Paris',
+  }).format(instant);
+}
+
+// Ligne de suivi de l'alerte WhatsApp ; null si l'alerte n'est pas configurée.
+function suiviAlerte(alerte) {
+  if (!alerte || alerte.statut === 'saute') return null;
+  if (alerte.statut === 'envoye') return 'Alerte WhatsApp envoyée';
+  return `Alerte WhatsApp non envoyée : ${alerte.erreur}`;
 }
 
 const telLien = (tel) => `tel:${String(tel).replace(/[^\d+]/g, '')}`;
@@ -128,9 +165,13 @@ export function emailClient(d) {
   const lang = d.lang === 'en' ? 'en' : 'fr';
   const t = TEXTES[lang];
   const prix = prixClient(d.prix, lang);
+  // Course dans l'heure : personne n'a encore confirmé, le client doit savoir qu'il va être rappelé.
+  const intro = estUrgent(d.minutes) ? t.introUrgent(TEL_LISIBLE[lang]) : t.intro;
+  const trajetConnu = d.trajetLisible || trajetLisible(d);
+  const clientTrajet = trajetConnu === 'Trajet non précisé' ? t.nonPrecise : trajetConnu;
   const lignes = [
     ligne(t.reference, `<span style="color:${OR};font-weight:bold;">${echapper(d.ref)}</span>`),
-    ligne(t.trajet, echapper(d.trajet || t.nonPrecise)),
+    ligne(t.trajet, echapper(clientTrajet)),
     d.airport ? ligne(t.terminal, echapper(d.airport)) : '',
     ligne(t.adresse, echapper(d.adresse)),
     ligne(t.date, echapper(dateLisible(d.date, lang))),
@@ -141,7 +182,7 @@ export function emailClient(d) {
 
   const contenu = `<h1 style="margin:0 0 20px;font-family:${SERIF};font-size:30px;font-weight:normal;color:${BLANC};">${echapper(t.titre)}</h1>
 <p style="margin:0 0 8px;font-family:${SANS};font-size:15px;line-height:1.6;color:${BLANC};">${echapper(t.bonjour(d.nom))}</p>
-<p style="margin:0 0 28px;font-family:${SANS};font-size:15px;line-height:1.6;color:${BLANC};">${echapper(t.intro)}</p>
+<p style="margin:0 0 28px;font-family:${SANS};font-size:15px;line-height:1.6;color:${BLANC};">${echapper(intro)}</p>
 <p style="margin:0 0 4px;font-family:${SANS};font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${OR};">${echapper(t.recap)}</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 ${lignes}
@@ -157,9 +198,9 @@ ${bouton('WhatsApp', WHATSAPP, false)}
 <p style="margin:28px 0 0;padding-top:20px;border-top:1px solid ${BORDURE};font-family:${SANS};font-size:12px;line-height:1.6;color:${GRIS};">${echapper(t.pied)} <a href="${SITE}" style="color:${OR};text-decoration:none;">toairport.fr</a></p>`;
 
   const texte = [
-    t.bonjour(d.nom), '', t.intro, '',
+    t.bonjour(d.nom), '', intro, '',
     `${t.recap} (${t.reference.toLowerCase()} ${d.ref})`, '-------------',
-    `${t.trajet} : ${d.trajet || t.nonPrecise}`,
+    `${t.trajet} : ${clientTrajet}`,
     d.airport ? `${t.terminal} : ${d.airport}` : null,
     `${t.adresse} : ${d.adresse}`,
     `${t.date} : ${dateLisible(d.date, lang)}`,
@@ -174,20 +215,30 @@ ${bouton('WhatsApp', WHATSAPP, false)}
 }
 
 export function emailOperateur(d) {
-  const trajet = d.trajet || 'Non précisé';
+  const trajet = d.trajetLisible || trajetLisible(d);
+  const urgent = estUrgent(d.minutes);
+  const delai = libelleDelai(d.minutes);
+  const recu = horodatage(d.recuLe);
+  const alerte = suiviAlerte(d.alerte);
   const carte = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.adresse)}`;
   const lien = (href, texte) => `<a href="${echapper(href)}" style="color:${OR};text-decoration:none;">${echapper(texte)}</a>`;
+  const petitTitre = (texte, marge) => `<p style="margin:${marge};font-family:${SANS};font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${OR};">${echapper(texte)}</p>`;
 
-  const contenu = `<p style="margin:0 0 6px;font-family:${SANS};font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${OR};">Nouvelle demande ${echapper(d.ref)}</p>
-<h1 style="margin:0 0 6px;font-family:${SERIF};font-size:28px;font-weight:normal;color:${BLANC};">${echapper(trajet)}</h1>
-<p style="margin:0 0 26px;font-family:${SERIF};font-size:20px;color:${OR};">${echapper(dateLisible(d.date, 'fr'))} à ${echapper(d.heure)}</p>
+  const bandeau = urgent
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px;"><tr><td bgcolor="${OR}" style="background:${OR};border-radius:2px;padding:12px 16px;font-family:${SANS};font-size:14px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${NOIR};">${echapper(delai)}</td></tr></table>\n`
+    : '';
+
+  const contenu = `${bandeau}${petitTitre(`Nouvelle demande ${d.ref}`, '0 0 6px')}
+<h1 style="margin:0 0 22px;font-family:${SERIF};font-size:28px;font-weight:normal;color:${BLANC};">${echapper(trajet)}</h1>
+${petitTitre('Prise en charge', '0 0 4px')}
+<p style="margin:0 0 26px;font-family:${SERIF};font-size:20px;color:${OR};">${echapper(dateLisible(d.date, 'fr'))} à ${echapper(d.heure)}${urgent ? '' : `<br><span style="font-family:${SANS};font-size:13px;color:${GRIS};">${echapper(delai)}</span>`}</p>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 ${d.airport ? ligne('Aéroport / terminal', echapper(d.airport)) : ''}
 ${ligne('Adresse de départ', `${echapper(d.adresse)}<br>${lien(carte, 'Voir sur la carte')}`)}
 ${ligne('Passagers', echapper(d.passagers || '1'))}
 ${ligne('Prix affiché', echapper(d.prix))}
 </table>
-<p style="margin:26px 0 4px;font-family:${SANS};font-size:12px;letter-spacing:2px;text-transform:uppercase;color:${OR};">Client</p>
+${petitTitre('Client', '26px 0 4px')}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 ${ligne('Nom', echapper(d.nom))}
 ${ligne('Téléphone', lien(telLien(d.telephone), d.telephone))}
@@ -196,33 +247,37 @@ ${ligne('Email', lien(`mailto:${d.email}`, d.email))}
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:22px;"><tr>
 ${bouton('Appeler le client', telLien(d.telephone), true)}
 </tr></table>
-<p style="margin:28px 0 0;padding-top:18px;border-top:1px solid ${BORDURE};font-family:${SANS};font-size:12px;line-height:1.6;color:${GRIS};">Page d'origine : ${echapper(d.page)} · Langue : ${echapper(d.lang)} · Répondre à cet email écrit au client.</p>`;
+<p style="margin:28px 0 0;padding-top:18px;border-top:1px solid ${BORDURE};font-family:${SANS};font-size:12px;line-height:1.6;color:${GRIS};">${recu ? `Demande envoyée le ${echapper(recu)}<br>` : ''}${alerte ? `${echapper(alerte)}<br>` : ''}Page d'origine : ${echapper(d.page)} · Langue : ${echapper(d.lang)} · Répondre à cet email écrit au client.</p>`;
 
-  const texte = `
-Nouvelle demande de réservation ${d.ref} - toAirport.fr
+  const texte = [
+    urgent ? `*** ${delai} ***\n` : null,
+    `Nouvelle demande de réservation ${d.ref} - toAirport.fr`,
+    '',
+    `Trajet : ${trajet}`,
+    `Prise en charge : ${dateLisible(d.date, 'fr')} à ${d.heure} (${delai})`,
+    d.airport ? `Aéroport / Terminal : ${d.airport}` : null,
+    `Adresse de départ : ${d.adresse}`,
+    `Passagers : ${d.passagers || '1'}`,
+    `Prix affiché : ${d.prix}`,
+    '',
+    'Contact',
+    '-------',
+    `Nom : ${d.nom}`,
+    `Email : ${d.email}`,
+    `Téléphone : ${d.telephone}`,
+    '',
+    'Suivi',
+    '-----',
+    recu ? `Demande envoyée le ${recu}` : null,
+    alerte,
+    `Page d'origine : ${d.page}`,
+    `Langue : ${d.lang}`,
+  ].filter((l) => l !== null).join('\n');
 
-Trajet : ${trajet}${d.airport ? `\nAéroport / Terminal : ${d.airport}` : ''}
-Adresse de départ : ${d.adresse}
-Date : ${d.date}
-Heure : ${d.heure}
-Passagers : ${d.passagers || '1'}
-Prix affiché : ${d.prix}
-
-Contact
--------
-Nom : ${d.nom}
-Email : ${d.email}
-Téléphone : ${d.telephone}
-
-Suivi
------
-Page d'origine : ${d.page}
-Langue : ${d.lang}
-`.trim();
-
+  // L'objet commence toujours par « [Réservation TA-...] » : les filtres de messagerie s'appuient dessus.
   return {
-    subject: `[Réservation ${d.ref}] ${trajet} - ${d.nom} - ${d.date} ${d.heure}`,
+    subject: `[Réservation ${d.ref}] ${urgent ? `${delai.replace(/^URGENT, /, 'URGENT - ')} - ` : ''}${trajet} - ${d.nom} - ${d.date} ${d.heure}`,
     text: texte,
-    html: page({ lang: 'fr', apercu: `${trajet}, ${d.date} ${d.heure}, ${d.nom}`, contenu }),
+    html: page({ lang: 'fr', apercu: `${urgent ? `${delai} - ` : ''}${trajet}, ${d.date} ${d.heure}, ${d.nom}`, contenu }),
   };
 }
