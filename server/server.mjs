@@ -2,6 +2,8 @@
 // Sert les pages du dépôt telles quelles et reçoit les réservations sur POST /api/reservation.
 // Reprend ce que faisait Netlify : en-têtes de sécurité, /tarifs -> /tarifs/, www -> domaine nu,
 // fichiers internes jamais servis. La compression est faite par le proxy de Coolify.
+// SEO : /index.html -> dossier, X-Robots-Tag noindex hors toairport.fr (adresse d'essai),
+// cache de 30 jours sur les images, polices et la bibliothèque GSAP.
 // Usage : node server/server.mjs (PORT, 3000 par défaut).
 import { createServer } from 'node:http';
 import { createReadStream } from 'node:fs';
@@ -47,8 +49,26 @@ const ENTETES = {
 
 const TAILLE_MAX_CORPS = 20_000;
 
+// Seul domaine indexable. Les autres (adresse d'essai toairport.vps.olivierlam.fr) reçoivent
+// X-Robots-Tag: noindex, sauf en local.
+const HOTE_CANONIQUE = 'toairport.fr';
+const HOTES_LOCAUX = new Set(['localhost', '127.0.0.1', '[::1]']);
+
+// Fichiers qui ne changent presque jamais : 30 jours de cache. Une image régénérée garde son nom,
+// le navigateur peut donc garder l'ancienne jusqu'à 30 jours. HTML, CSS et JS restent revalidés
+// à chaque visite (ETag, 304) : leurs noms ne changent pas d'un déploiement à l'autre.
+const CACHE_LONG = new Set(['.webp', '.png', '.jpg', '.jpeg', '.svg', '.ico', '.woff', '.woff2']);
+const CACHE_LONG_DOSSIERS = ['/assets/vendor/'];
+const CACHE_30_JOURS = 'public, max-age=2592000';
+const CACHE_REVALIDE = 'public, max-age=0, must-revalidate';
+
+function cachePour(chemin, extension) {
+  if (CACHE_LONG.has(extension) || CACHE_LONG_DOSSIERS.some((d) => chemin.startsWith(d))) return CACHE_30_JOURS;
+  return CACHE_REVALIDE;
+}
+
 function repondre(res, statut, entetes = {}, corps = '') {
-  res.writeHead(statut, { ...ENTETES, ...entetes });
+  res.writeHead(statut, { ...ENTETES, ...res.entetesHote, ...entetes });
   res.end(corps);
 }
 
@@ -89,6 +109,9 @@ async function fichier(req, res, url, racine) {
   } catch {
     return introuvable(res, tete);
   }
+  if (chemin.endsWith('/index.html')) {
+    return repondre(res, 301, { Location: `${chemin.slice(0, -'index.html'.length)}${url.search}` });
+  }
   const segments = chemin.split('/').filter(Boolean);
   if (segments.some((s) => s.startsWith('.')) || BLOQUES.has(segments[0])) return introuvable(res, tete);
 
@@ -108,14 +131,14 @@ async function fichier(req, res, url, racine) {
   const etag = `"${infos.size.toString(16)}-${Math.floor(infos.mtimeMs).toString(16)}"`;
   const entetes = {
     'Content-Type': TYPES[extname(cible).toLowerCase()] ?? 'application/octet-stream',
-    'Cache-Control': 'public, max-age=0, must-revalidate',
+    'Cache-Control': cachePour(chemin, extname(cible).toLowerCase()),
     ETag: etag,
     'Last-Modified': infos.mtime.toUTCString(),
   };
   if (req.headers['if-none-match'] === etag) return repondre(res, 304, entetes);
   entetes['Content-Length'] = infos.size;
   if (tete) return repondre(res, 200, entetes);
-  res.writeHead(200, { ...ENTETES, ...entetes });
+  res.writeHead(200, { ...ENTETES, ...res.entetesHote, ...entetes });
   createReadStream(cible).pipe(res);
 }
 
@@ -126,6 +149,8 @@ export function creerServeur({ racine = RACINE } = {}) {
       if (hote.startsWith('www.')) {
         return repondre(res, 301, { Location: `https://${hote.slice(4)}${req.url}` });
       }
+      const nomHote = hote.replace(/:\d+$/, '');
+      if (nomHote !== HOTE_CANONIQUE && !HOTES_LOCAUX.has(nomHote)) res.entetesHote = { 'X-Robots-Tag': 'noindex' };
       const url = new URL(req.url, 'http://local');
       if (url.pathname === '/api/reservation') return await reservation(req, res);
       return await fichier(req, res, url, racine);

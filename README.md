@@ -162,7 +162,9 @@ Depuis le 27 octobre 2026, le site tourne sur le VPS OVH `141.94.205.4`, piloté
 - **Déploiement** : un push sur `main` déclenche le webhook GitHub, Coolify reconstruit l'image du `Dockerfile` et la remplace sans coupure (une vingtaine de secondes). Bouton « Redeploy » dans Coolify pour relancer à la main.
 - **Domaines de la ressource Coolify** : `https://toairport.fr`, `https://www.toairport.fr` et `https://toairport.vps.olivierlam.fr` (adresse d'essai). Certificats Let's Encrypt gérés par Coolify, compression gzip activée dans la ressource.
 - **DNS** (zone OVH `toairport.fr`) : `toairport.fr` et `www` en A vers `141.94.205.4`. MX et TXT (mail OVH, validations Search Console) ne dépendent pas de l'hébergement.
-- **Serveur** (`server/server.mjs`, sans framework) : sert les dossiers du dépôt tels quels, redirige `/tarifs` vers `/tarifs/` et `www` vers le domaine nu, pose les en-têtes de sécurité (`X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`) et refuse les fichiers internes et les chemins commençant par un point. Le formulaire appelle `POST /api/reservation` (anciennement `/.netlify/functions/reservation`).
+- **Serveur** (`server/server.mjs`, sans framework) : sert les dossiers du dépôt tels quels, redirige `/tarifs` vers `/tarifs/`, `…/index.html` vers son dossier (`/index.html` -> `/`) et `www` vers le domaine nu, pose les en-têtes de sécurité (`X-Frame-Options`, `nosniff`, `Referrer-Policy`, `Permissions-Policy`) et refuse les fichiers internes et les chemins commençant par un point. Le formulaire appelle `POST /api/reservation` (anciennement `/.netlify/functions/reservation`).
+- **Domaine indexable** : seul `toairport.fr` est indexé. Toute autre adresse (l'adresse d'essai `toairport.vps.olivierlam.fr`) reçoit l'en-tête `X-Robots-Tag: noindex` sur chaque réponse, pour que Google ne la prenne pas pour un doublon du site. `localhost` et `127.0.0.1` en sont dispensés.
+- **Cache** : images, icônes, polices et `assets/vendor/` (GSAP) sont servis avec `Cache-Control: public, max-age=2592000` (30 jours). Une image régénérée sous le même nom peut donc rester l'ancienne jusqu'à 30 jours chez un visiteur déjà venu : changer son nom si la nouvelle doit se voir tout de suite. HTML, CSS et JS restent revalidés à chaque visite (`max-age=0`, ETag, réponse 304), leurs noms ne changeant pas d'un déploiement à l'autre.
 - **En local** : `npm start` (port 3000, `PORT` pour en changer). Sans variables SMTP, le formulaire répond une erreur 500 à l'envoi.
 - **Tests** : `npm test` (node:test, aucun envoi réel d'email). À lancer avant chaque push qui touche `server/`.
 
@@ -189,7 +191,7 @@ Mise en page aux couleurs du site (noir `#0a0a0b`, doré `#c9a96e`), en tableaux
 
 ## Vérification en ligne
 
-`npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. `CHECK_BASE=https://toairport.vps.olivierlam.fr npm run check:live` vérifie la même liste sur une autre adresse (adresse d'essai, ou `http://localhost:3000`). Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
+`npm run check:live` lit `sitemap.xml`, interroge chaque adresse en ligne et sort en erreur si une page ne répond pas 200 ou porte un `noindex`. À lancer après chaque push : une page du dépôt en 404 en ligne signale un déploiement qui n'est pas passé. `CHECK_BASE=https://toairport.vps.olivierlam.fr npm run check:live` vérifie la même liste sur une autre adresse (adresse d'essai, ou `http://localhost:3000`). Avec `CHECK_BASE`, l'en-tête `X-Robots-Tag: noindex` est attendu et ignoré : seule la balise meta `robots` compte. Le sitemap ne liste que des pages indexables (pas `mentions-legales/`, qui est en `noindex`).
 
 ## Répartition des requêtes de prix
 
@@ -204,3 +206,5 @@ Une requête, une page, pour éviter que deux pages se disputent la même recher
 | taxi Montparnasse Orly (prix, forfait, temps de trajet) | `/taxi-montparnasse-orly/` |
 
 Les cartes de prix de `/tarifs/` sont des liens vers la page dédiée du trajet. Pas de `aggregateRating` dans les données structurées : Google ne l'accepte pas sur `TaxiService` (erreur « Type d'objet non valide » dans Search Console) et une note doit reposer sur des avis vérifiables. Aucun avis, note ni chiffre d'activité inventé sur le site : les témoignages, la note 4,9 et « 4k+ courses » du modèle de départ ont été retirés le 27 octobre 2026. Un avis n'est publié que s'il vient d'un vrai client (par exemple de la fiche Google), un chiffre que s'il est vérifiable. Les titres écrivent « Paris Orly » ou « CDG Paris » sans flèche, comme les requêtes tapées ; la flèche reste dans les H1.
+
+Balises `<meta name="description">` : 160 caractères au plus (Google coupe au-delà), prix en tête. `og:description` et `twitter:description` peuvent rester plus longues. Les pages anglaises ont aussi un `BreadcrumbList` (toAirport.fr > Paris airport taxi fares 2026 > page).

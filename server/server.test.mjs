@@ -84,6 +84,32 @@ test('www renvoie vers le domaine nu', async () => {
   assert.equal(r.entetes.location, 'https://toairport.fr/tarifs/');
 });
 
+test('/index.html renvoie vers son dossier', async () => {
+  for (const [chemin, cible] of [['/index.html', '/'], ['/tarifs/index.html?x=1', '/tarifs/?x=1'], ['/en/orly-airport-taxi/index.html', '/en/orly-airport-taxi/']]) {
+    const r = await appel(chemin);
+    assert.equal(r.statut, 301, chemin);
+    assert.equal(r.entetes.location, cible, chemin);
+  }
+});
+
+test('noindex sur tout autre domaine que toairport.fr, sauf en local', async () => {
+  assert.equal((await appel('/')).entetes['x-robots-tag'], undefined);
+  assert.equal((await appel('/', { hote: 'localhost:3000' })).entetes['x-robots-tag'], undefined);
+  for (const chemin of ['/', '/tarifs/', '/robots.txt', '/page-qui-n-existe-pas/']) {
+    assert.equal((await appel(chemin, { hote: 'toairport.vps.olivierlam.fr' })).entetes['x-robots-tag'], 'noindex', chemin);
+  }
+});
+
+test('cache de 30 jours sur les images et GSAP, revalidation pour HTML, CSS et JS', async () => {
+  const long = 'public, max-age=2592000';
+  assert.equal((await appel('/assets/images/paris-nuit.webp')).entetes['cache-control'], long);
+  assert.equal((await appel('/favicon.svg')).entetes['cache-control'], long);
+  assert.equal((await appel('/assets/vendor/gsap/gsap.min.js')).entetes['cache-control'], long);
+  for (const chemin of ['/', '/assets/style.css', '/assets/main.js', '/sitemap.xml']) {
+    assert.equal((await appel(chemin)).entetes['cache-control'], 'public, max-age=0, must-revalidate', chemin);
+  }
+});
+
 test('réservation : GET refusé, corps invalide ou incomplet refusé', async () => {
   assert.equal((await appel('/api/reservation')).statut, 405);
   assert.equal((await appel('/api/reservation', { methode: 'POST', corps: 'pas du json' })).statut, 400);

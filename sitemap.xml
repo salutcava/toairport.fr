@@ -2,37 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://toairport.fr/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-paris-cdg/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-cdg-paris/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-paris-orly/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-orly-paris/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-montparnasse-orly/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -50,59 +50,61 @@
   </url>
   <url>
     <loc>https://toairport.fr/taxi-orly-cdg/</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-ou-uber-aeroport/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-ou-ligne-14-orly/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/taxi-ou-rer-b-cdg/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/tarifs/</loc>
-    <lastmod>2026-10-24</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://toairport.fr/vtc-paris-cdg/</loc>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/reservation/</loc>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://toairport.fr/en/paris-airport-taxi-fares/</loc>
-    <lastmod>2026-10-11</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/en/orly-airport-taxi/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://toairport.fr/en/cdg-airport-taxi/</loc>
-    <lastmod>2026-10-12</lastmod>
+    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
