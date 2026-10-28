@@ -236,16 +236,28 @@ const ALERTE = {
   prix: 'Forfait 36 € + réservation immédiate 4 € = 40 € au plus', nom: 'Client', telephone: '',
 };
 
-test('alerte WhatsApp : modèle à 9 variables, sans retour à la ligne ni valeur vide', () => {
-  const corps = corpsAlerte(ALERTE, '33600000000', 'nouvelle_reservation');
+test('alerte WhatsApp : modèle complet à 13 variables et bouton carte, modèle court à 9', () => {
+  const complet = { ...ALERTE, airport: '', email: 'client@example.test', recuLeLisible: 'mercredi 28 octobre 2026 à 12:04', page: '/reservation/', lang: 'fr' };
+  const corps = corpsAlerte(complet, '33600000000');
   assert.equal(corps.type, 'template');
-  assert.equal(corps.template.name, 'nouvelle_reservation');
+  assert.equal(corps.template.name, 'nouvelle_reservation_complete');
   assert.equal(corps.template.language.code, 'fr');
-  const textes = corps.template.components[0].parameters.map((p) => p.text);
-  assert.equal(textes.length, 9);
+  const [corpsTexte, bouton] = corps.template.components;
+  const textes = corpsTexte.parameters.map((p) => p.text);
+  assert.equal(textes.length, 13);
   assert.equal(textes[1], 'URGENT, prise en charge dans 46 min');
-  assert.equal(textes[4], 'Gare Montparnasse');
-  assert.equal(textes[8], '-');
+  assert.equal(textes[3], 'non précisé');
+  assert.equal(textes[5], 'Gare Montparnasse', 'retour à la ligne retiré');
+  assert.equal(textes[9], '-', 'valeur vide remplacée');
+  assert.equal(textes[10], 'client@example.test');
+  assert.equal(textes[11], 'mercredi 28 octobre 2026 à 12:04');
+  assert.equal(textes[12], '/reservation/ (fr)');
+  assert.deepEqual(bouton, { type: 'button', sub_type: 'url', index: '0', parameters: [{ type: 'text', text: 'Gare%20Montparnasse' }] });
+
+  const court = corpsAlerte(ALERTE, '33600000000', 'court');
+  assert.equal(court.template.name, 'nouvelle_reservation');
+  assert.equal(court.template.components.length, 1);
+  assert.equal(court.template.components[0].parameters.length, 9);
 });
 
 function fauxFetch(reponses) {
@@ -265,7 +277,8 @@ const ENV_WA = { WHATSAPP_TOKEN: 'jeton-test', WHATSAPP_PHONE_ID: '123', WHATSAP
 test('alerte WhatsApp : un appel par destinataire, jeton en en-tête', async () => {
   const f = fauxFetch([]);
   const r = await envoyerAlerte(ALERTE, { env: ENV_WA, fetch: f });
-  assert.deepEqual(r, { statut: 'envoye', destinataires: 2 });
+  assert.deepEqual(r, { statut: 'envoye', destinataires: 2, modele: 'complet' });
+  assert.ok(f.appels.every((a) => a.corps.template.name === 'nouvelle_reservation_complete'));
   assert.equal(f.appels.length, 2);
   assert.equal(f.appels[0].url, 'https://graph.facebook.com/v25.0/123/messages');
   assert.equal(f.appels[0].options.headers.Authorization, 'Bearer jeton-test');
@@ -277,13 +290,37 @@ test('alerte WhatsApp : sautée sans jeton, échec lisible si Meta refuse ou ne 
   assert.equal((await envoyerAlerte(ALERTE, { env: { WHATSAPP_TOKEN: 'x' } })).statut, 'echec');
   const erreur = console.error;
   console.error = () => {};
-  const refus = { ok: false, status: 400, json: async () => ({ error: { message: 'Template name does not exist', code: 132001 } }) };
+  const refus = { ok: false, status: 400, json: async () => ({ error: { message: 'Message undeliverable', code: 131026 } }) };
   const r = await envoyerAlerte(ALERTE, { env: { ...ENV_WA, WHATSAPP_ALERTE_TO: '33600000001' }, fetch: fauxFetch([refus]) });
   const panne = await envoyerAlerte(ALERTE, { env: { ...ENV_WA, WHATSAPP_ALERTE_TO: '33600000001' }, fetch: fauxFetch([new Error('ECONNRESET')]) });
   console.error = erreur;
   assert.equal(r.statut, 'echec');
-  assert.match(r.erreur, /Template name does not exist \(code 132001\)/);
+  assert.match(r.erreur, /Message undeliverable \(code 131026\)/);
   assert.match(panne.erreur, /ECONNRESET/);
+});
+
+const MODELE_EN_EXAMEN = { ok: false, status: 404, json: async () => ({ error: { message: '(#132001) Template name does not exist in the translation', code: 132001 } }) };
+
+test('alerte WhatsApp : modèle complet pas encore validé, le modèle court prend le relais', async () => {
+  const f = fauxFetch([MODELE_EN_EXAMEN]);
+  const r = await envoyerAlerte(ALERTE, { env: { ...ENV_WA, WHATSAPP_ALERTE_TO: '33600000001' }, fetch: f });
+  assert.deepEqual(r, { statut: 'envoye', destinataires: 1, modele: 'court' });
+  assert.deepEqual(f.appels.map((a) => a.corps.template.name), ['nouvelle_reservation_complete', 'nouvelle_reservation']);
+});
+
+test('alerte WhatsApp : pas de repli pour une autre erreur, les deux messages si le repli échoue aussi', async () => {
+  const erreur = console.error;
+  console.error = () => {};
+  const jetonRefuse = { ok: false, status: 401, json: async () => ({ error: { message: 'Invalid OAuth access token', code: 190 } }) };
+  const f1 = fauxFetch([jetonRefuse]);
+  const r1 = await envoyerAlerte(ALERTE, { env: { ...ENV_WA, WHATSAPP_ALERTE_TO: '33600000001' }, fetch: f1 });
+  const f2 = fauxFetch([MODELE_EN_EXAMEN, MODELE_EN_EXAMEN]);
+  const r2 = await envoyerAlerte(ALERTE, { env: { ...ENV_WA, WHATSAPP_ALERTE_TO: '33600000001' }, fetch: f2 });
+  console.error = erreur;
+  assert.equal(f1.appels.length, 1);
+  assert.match(r1.erreur, /Invalid OAuth access token \(code 190\)/);
+  assert.equal(f2.appels.length, 2);
+  assert.match(r2.erreur, /code 132001\), puis modèle court : .*code 132001\)$/);
 });
 
 test('réservation dans l\'heure : URGENT partout, échec WhatsApp signalé, réservation acceptée', async () => {

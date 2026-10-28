@@ -101,7 +101,7 @@ export function trajetLisible(d) {
 export const priseEnChargeLisible = (d) => `${dateLisible(d.date, 'fr')} à ${d.heure}`;
 
 // « mercredi 28 octobre 2026 à 12:04 », heure de Paris.
-function horodatage(instant) {
+export function horodatage(instant) {
   if (!(instant instanceof Date)) return null;
   return new Intl.DateTimeFormat('fr-FR', {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit',
@@ -112,7 +112,7 @@ function horodatage(instant) {
 // Ligne de suivi de l'alerte WhatsApp ; null si l'alerte n'est pas configurée.
 function suiviAlerte(alerte) {
   if (!alerte || alerte.statut === 'saute') return null;
-  if (alerte.statut === 'envoye') return 'Alerte WhatsApp envoyée';
+  if (alerte.statut === 'envoye') return `Alerte WhatsApp envoyée${alerte.modele === 'court' ? ' (modèle court)' : ''}`;
   return `Alerte WhatsApp non envoyée : ${alerte.erreur}`;
 }
 

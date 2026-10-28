@@ -3,7 +3,7 @@
 // Variables d'environnement : OVH_SMTP_HOST, OVH_SMTP_PORT, OVH_EMAIL_USER, OVH_EMAIL_PASS, RECIPIENT_EMAIL,
 // et celles de l'alerte WhatsApp (voir server/whatsapp.mjs).
 import nodemailer from 'nodemailer';
-import { emailClient, emailOperateur, priseEnChargeLisible, trajetLisible } from './emails.mjs';
+import { emailClient, emailOperateur, horodatage, priseEnChargeLisible, trajetLisible } from './emails.mjs';
 import { envoyerAlerte, minutesAvantPriseEnCharge } from './whatsapp.mjs';
 
 // Renvoie { statusCode, body }. Pour les tests, qui n'envoient rien : `transport` (emails),
@@ -49,6 +49,7 @@ export async function traiterReservation(corps, { env = process.env, transport, 
   // Délai avant la prise en charge (minutes, null si illisible) : décide de la mention URGENT.
   demande.minutes = minutesAvantPriseEnCharge(date, heure, maintenant);
   demande.recuLe = maintenant;
+  demande.recuLeLisible = horodatage(maintenant);
   demande.trajetLisible = trajetLisible(demande);
   demande.priseEnCharge = priseEnChargeLisible(demande);
   // L'alerte part avant les emails et son résultat est écrit dans l'email opérateur.
